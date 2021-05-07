@@ -1,0 +1,31 @@
+{
+    "name": "vcat/bulk-download-for-gravity-forms",
+    "description": "Bulk download al files from a Gravity Forms entry in one go.",
+    "require": {
+        "php": ">=5.6"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5.4",
+        "squizlabs/php_codesniffer": "^3.6.0",
+        "wp-coding-standards/wpcs": "^2.3.0",
+        "dealerdirect/phpcodesniffer-composer-installer": "^0.7.1",
+        "phpcompatibility/phpcompatibility-wp": "^2.1"
+    },
+    "license": "GPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "Bernhard Kau",
+            "email": "bernhard.kau@vcat.de"
+        },
+        {
+            "name": "Torsten Haendler",
+            "email": "torsten.haendler@vcat.de"
+        }
+    ],
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {
+            "BDFGF\\": "lib/"
+        }
+    }
+}
