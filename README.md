@@ -1,12 +1,12 @@
 # Bulk Download for Gravity Forms
 
-Contributors: vcat-support
-Requires at least: 5.0
-Tested up to: 5.7
-Requires PHP: 5.6
-Stable tag: 1.0.0
-License: GPLv3
-License URI: https://www.gnu.org/licenses/gpl-3.0.txt
+**Contributors:** VCATconsulting  
+**Requires at least:** 5.0  
+**Tested up to:** 5.7  
+**Requires PHP:** 5.6  
+**Stable tag:** 1.0.0  
+**License:** GPLv3  
+**License URI:** https://www.gnu.org/licenses/gpl-3.0.txt  
 
 Bulk download all files from a Gravity Forms entry in one go.
 
