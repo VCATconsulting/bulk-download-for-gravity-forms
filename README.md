@@ -23,13 +23,16 @@ Therefore, it adds a download link to the list view, and an extra download butto
 4. Find the Bulk Download link in list and single view!  
 
 ## Screenshots
+
 1. Find the Bulk Download link by hovering a Gravity Forms entry in the list view  
 2. An extra button is added by the plugin at the right sidebar in the detail view of an entry  
 
 ## Changelog
 
 ### 1.0.1
+
 * Remove function to load translation files from the plugin directory
 
 ### 1.0.0
+
 * First stable version
