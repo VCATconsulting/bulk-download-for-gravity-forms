@@ -4,7 +4,7 @@ Contributors: VCATconsulting, Kau-Boy, shogathu, nida78
 Requires at least: 5.0
 Tested up to: 5.7
 Requires PHP: 5.6
-Stable tag: 1.0.1
+Stable tag: 1.1.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -28,6 +28,11 @@ Therefore, it adds a download link to the list view, and an extra download butto
 2. An extra button is added by the plugin at the right sidebar in the detail view of an entry
 
 == Changelog ==
+
+= 1.1.0 =
+
+* Prevent issues when files with empty paths are added to the ZIP file
+* Use the sanitized form title for the download file name
 
 = 1.0.1 =
 
