@@ -63,13 +63,17 @@ class BulkDownload {
 					if ( is_null( $field_files ) ) {
 						$field_files = [ $entry[ $upload_field ] ];
 					}
-					$uploaded_files = array_merge( $uploaded_files, $field_files );
+					if ( ! empty( $field_files ) ) {
+						$uploaded_files = array_merge( $uploaded_files, $field_files );
+					}
 				}
 
 				$wp_upload_dir = wp_upload_dir();
 				// Replace the URL path with the file system path for all files.
 				foreach ( $uploaded_files as $key => $uploaded_file ) {
-					$uploaded_files[ $key ] = str_replace( $wp_upload_dir['baseurl'], $wp_upload_dir['basedir'], $uploaded_file );
+					if ( ! empty( $uploaded_file ) ) {
+						$uploaded_files[ $key ] = str_replace( $wp_upload_dir['baseurl'], $wp_upload_dir['basedir'], $uploaded_file );
+					}
 				}
 
 				// Create a temp file, so even if the process dies, the file might eventually get deleted.
@@ -79,7 +83,9 @@ class BulkDownload {
 				$zip->open( $zip_filename, ZipArchive::CREATE );
 
 				foreach ( $uploaded_files as $uploaded_file ) {
-					$zip->addFile( $uploaded_file, basename( $uploaded_file ) );
+					if ( is_readable( $uploaded_file ) ) {
+						$zip->addFile( $uploaded_file, basename( $uploaded_file ) );
+					}
 				}
 
 				$zip->close();
