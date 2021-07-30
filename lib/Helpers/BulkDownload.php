@@ -53,6 +53,19 @@ class BulkDownload {
 			try {
 				// Get the entry and it's corresponding form object.
 				$entry = GFAPI::get_entry( $entry_id );
+
+				// Get the form object.
+				$form = GFAPI::get_form( $entry['form_id'] );
+				// Try to overwrite the filename with the title of the form.
+				$form_title = sanitize_title( $form['title'] );
+				if ( ! empty( $form_title ) ) {
+					$download_filename = sprintf(
+						'%s-%d',
+						$form_title,
+						$entry_id
+					);
+				}
+
 				// Get the upload fields.
 				$upload_fields = FormFields::get_form_upload_fields( $entry['form_id'] );
 
