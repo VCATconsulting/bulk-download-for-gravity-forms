@@ -22,6 +22,7 @@ class ComposerStaticInitaa504213b0ccb75438036f02050e8498
 
     public static $classMap = array (
         'BDFGF\\Helpers\\BulkDownload' => __DIR__ . '/../..' . '/lib/Helpers/BulkDownload.php',
+        'BDFGF\\Helpers\\DownloadMergeTag' => __DIR__ . '/../..' . '/lib/Helpers/DownloadMergeTag.php',
         'BDFGF\\Helpers\\FormFields' => __DIR__ . '/../..' . '/lib/Helpers/FormFields.php',
         'BDFGF\\Helpers\\RowActions' => __DIR__ . '/../..' . '/lib/Helpers/RowActions.php',
         'BDFGF\\MetaBoxes\\BulkDownload' => __DIR__ . '/../..' . '/lib/MetaBoxes/BulkDownload.php',

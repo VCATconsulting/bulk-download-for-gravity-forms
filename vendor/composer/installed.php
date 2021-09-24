@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => '77699e9806443fa32a43cd271fbc868f08893bef',
+    'reference' => '36c9e0bc2249f168dd1b6f92d67c6ad89573d0f8',
     'name' => 'vcat/bulk-download-for-gravity-forms',
   ),
   'versions' => 
@@ -18,7 +18,7 @@
       'aliases' => 
       array (
       ),
-      'reference' => '77699e9806443fa32a43cd271fbc868f08893bef',
+      'reference' => '36c9e0bc2249f168dd1b6f92d67c6ad89573d0f8',
     ),
   ),
 );

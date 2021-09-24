@@ -9,7 +9,9 @@ namespace BDFGF;
 
 use BDFGF\Helpers\BulkDownload;
 use BDFGF\Helpers\RowActions;
+use BDFGF\Helpers\DownloadMergeTag;
 use BDFGF\MetaBoxes\BulkDownload as BulkDownloadMetaBox;
+
 
 /**
  * Init function of the plugin
@@ -24,6 +26,7 @@ function init() {
 	$modules = [
 		'helpers_bulk_download'    => new BulkDownload(),
 		'helpers_row_actions'      => new RowActions(),
+		'download_merge_tag'       => new DownloadMergeTag(),
 		'meta_boxes_bulk_download' => new BulkDownloadMetaBox(),
 	];
 

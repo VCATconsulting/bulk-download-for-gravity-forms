@@ -2,17 +2,17 @@
 
 Contributors: VCATconsulting, Kau-Boy, shogathu, nida78  
 Requires at least: 5.0  
-Tested up to: 5.7  
+Tested up to: 5.8  
 Requires PHP: 5.6  
-Stable tag: 1.0.1  
+Stable tag: 1.1.0 
 License: GPLv3  
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt  
 
-Bulk download all files from a [Gravity Forms](https://www.gravityforms.com/ "visit Gavity Forms website") entry in one go.  
+Bulk download all files from a [Gravity Forms](https://www.gravityforms.com/ "visit Gravity Forms website") entry in one go.  
 
 ## Description
 
-This plugin is an add-on to the [Gravity Forms](https://www.gravityforms.com/ "visit Gavity Forms website") form builder plugin. It offers the opportunity to download all files from a single Gravity Forms entry with one click.  
+This plugin is an add-on to the [Gravity Forms](https://www.gravityforms.com/ "visit Gravity Forms website") form builder plugin. It offers the opportunity to download all files from a single Gravity Forms entry with one click.  
 Therefore, it adds a download link to the list view, and an extra download button to the single view of a Gravity Form entry. All files that are uploaded to the entry are collected and downloadable in a single ZIP file.  
 
 ## Installation
@@ -29,6 +29,11 @@ Therefore, it adds a download link to the list view, and an extra download butto
 
 ## Changelog
 
+### 1.1.0
+
+* Add custom Gravity Forms merge tag {bulk_download_link} to display a download link in notification mail.
+* Also add a "link_text" attribute to the Gravity Form merge tag {bulk_download_link:link_text="your link text"} to change the default link text.
+ 
 ### 1.0.1
 
 * Remove function to load translation files from the plugin directory
