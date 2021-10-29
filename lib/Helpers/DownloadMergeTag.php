@@ -88,7 +88,17 @@ class DownloadMergeTag {
 	public function render_bulk_download_link( $entry, $link_text ) {
 		return sprintf(
 			'<a href="%1$s">%2$s</a>',
-			esc_url( wp_nonce_url( admin_url( 'admin.php' ) . '?page=gf_entries&action=gf_bulk_download&gf_entry_id=' . esc_attr( $entry['id'] ), 'gf_bulk_download' ) ),
+			esc_url(
+				wp_nonce_url(
+					sprintf(
+						'%s?page=gf_entries&action=gf_bulk_download&gf_entry_id=%s&gf_form_id=%s',
+						admin_url( 'admin.php' ),
+						esc_attr( $entry['id'] ),
+						esc_attr( $entry['form_id'] )
+					),
+					'gf_bulk_download'
+				)
+			),
 			esc_html( $link_text )
 		);
 	}
