@@ -55,8 +55,15 @@ class BulkDownload {
 	 */
 	public function render_meta_box( $args, $metabox ) {
 		$entry = $args['entry'];
+
+		$link = sprintf(
+			'%s?page=gf_entries&action=gf_bulk_download&gf_entry_id=%s&gf_form_id=%s',
+			admin_url( 'admin.php' ),
+			esc_attr( $entry['id'] ),
+			esc_attr( $entry['form_id'] )
+		)
 		?>
-		<a class="button" aria-label="<?php esc_attr_e( 'Bulk download all files from this entry', 'bulk-download-for-gravity-forms' ); ?>" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php' ) . '?page=gf_entries&action=gf_bulk_download&gf_entry_id=' . esc_attr( $entry['id'] ), 'gf_bulk_download' ) ); ?>">
+		<a class="button" aria-label="<?php esc_attr_e( 'Bulk download all files from this entry', 'bulk-download-for-gravity-forms' ); ?>" href="<?php echo esc_url( wp_nonce_url( $link, 'gf_bulk_download' ) ); ?>">
 			<?php esc_html_e( 'Download all files for this entry', 'bulk-download-for-gravity-forms' ); ?>
 		</a>
 		<?php

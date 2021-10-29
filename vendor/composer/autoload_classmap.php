@@ -8,6 +8,7 @@ $baseDir = dirname($vendorDir);
 return array(
     'BDFGF\\Helpers\\BulkDownload' => $baseDir . '/lib/Helpers/BulkDownload.php',
     'BDFGF\\Helpers\\DownloadMergeTag' => $baseDir . '/lib/Helpers/DownloadMergeTag.php',
+    'BDFGF\\Helpers\\FilterBulkAction' => $baseDir . '/lib/Helpers/FilterBulkAction.php',
     'BDFGF\\Helpers\\FormFields' => $baseDir . '/lib/Helpers/FormFields.php',
     'BDFGF\\Helpers\\RowActions' => $baseDir . '/lib/Helpers/RowActions.php',
     'BDFGF\\MetaBoxes\\BulkDownload' => $baseDir . '/lib/MetaBoxes/BulkDownload.php',
