@@ -4,7 +4,7 @@ Contributors: VCATconsulting, Kau-Boy, shogathu, nida78
 Requires at least: 5.0
 Tested up to: 5.8
 Requires PHP: 5.6
-Stable tag: 2.0.0
+Stable tag: 2.1.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -28,6 +28,11 @@ Therefore, it adds a download link to the list view, and an extra download butto
 2. An extra button is added by the plugin at the right sidebar in the detail view of an entry
 
 == Changelog ==
+
+= 2.1.0 =
+
+* Adding support for the "Select all X entries" link for the bulk action.
+* Fixing an issue where zip file was missing some uploaded files.
 
 = 2.0.0 =
 
