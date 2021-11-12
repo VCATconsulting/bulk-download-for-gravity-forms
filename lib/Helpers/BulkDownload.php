@@ -151,25 +151,31 @@ class BulkDownload {
 	public function get_uploaded_files( $upload_fields, $entry_ids ) {
 		$uploaded_files = [];
 		foreach ( $entry_ids as $entry_id ) {
-			$entry = GFAPI::get_entry( $entry_id );
+			$entry                       = GFAPI::get_entry( $entry_id );
+			$uploaded_files[ $entry_id ] = [];
 
-			// If the field is a multi file upload, add all files from the JSON object to the array of uploaded files.
 			foreach ( $upload_fields as $upload_field ) {
+				// If the field is a multi file upload, add all files from the JSON object to the array of uploaded files.
 				$field_files = json_decode( $entry[ $upload_field ] );
+				if ( is_null( $field_files ) ) {
+					$field_files = [ $entry[ $upload_field ] ];
+				}
 
-				if ( ! is_null( $field_files ) && ! empty( $field_files ) ) {
-					$uploaded_files[ $entry_id ] = $field_files;
+				if ( ! empty( $field_files ) ) {
+					$uploaded_files[ $entry_id ] = array_merge( $uploaded_files[ $entry_id ], $field_files );
 				}
 			}
 
 			$wp_upload_dir = wp_upload_dir();
 			// Replace the URL path with the file system path for all files.
-			if ( isset( $uploaded_files[ $entry_id ] ) ) {
+			if ( ! empty( $uploaded_files[ $entry_id ] ) ) {
 				foreach ( $uploaded_files[ $entry_id ] as $key => $uploaded_file ) {
 					if ( ! empty( $uploaded_file ) ) {
 						$uploaded_files[ $entry_id ][ $key ] = str_replace( $wp_upload_dir['baseurl'], $wp_upload_dir['basedir'], $uploaded_file );
 					}
 				}
+			} else {
+				unset( $uploaded_files[ $entry_id ] );
 			}
 		}
 
