@@ -25,8 +25,8 @@ Therefore, it adds a download link to the list view, and an extra download butto
 == Screenshots ==
 
 1. Find the Bulk Download link by hovering a Gravity Forms entry in the list view
-2. An extra button is added by the plugin at the right sidebar in the detail view of an entry
-3. There is also a Bulk Action to download all files from multiple entries
+2. There is also a Bulk Action to download all files from multiple entries
+3. An extra button is added by the plugin at the right sidebar in the detail view of an entry
 4. A download link can be added to notifications using a merge tag
 
 == Changelog ==
