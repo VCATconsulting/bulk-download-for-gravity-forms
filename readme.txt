@@ -8,11 +8,11 @@ Stable tag: 2.1.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
-Bulk download all files from a [Gravity Forms](https://www.gravityforms.com/ "visit Gavity Forms website") entry in one go.
+Bulk download all files from a [Gravity Forms](https://www.gravityforms.com/ "visit Gravity Forms website") entry in one go.
 
 == Description ==
 
-This plugin is an add-on to the [Gravity Forms](https://www.gravityforms.com/ "visit Gavity Forms website") form builder plugin. It offers the opportunity to download all files from a single Gravity Forms entry with one click.
+This plugin is an add-on to the [Gravity Forms](https://www.gravityforms.com/ "visit Gravity Forms website") form builder plugin. It offers the opportunity to download all files from a single Gravity Forms entry with one click.
 Therefore, it adds a download link to the list view, and an extra download button to the single view of a Gravity Form entry. All files that are uploaded to the entry are collected and downloadable in a single ZIP file.
 
 == Installation ==
@@ -26,6 +26,8 @@ Therefore, it adds a download link to the list view, and an extra download butto
 
 1. Find the Bulk Download link by hovering a Gravity Forms entry in the list view
 2. An extra button is added by the plugin at the right sidebar in the detail view of an entry
+3. There is also a Bulk Action to download all files from multiple entries
+4. A download link can be added to notifications using a merge tag
 
 == Changelog ==
 
