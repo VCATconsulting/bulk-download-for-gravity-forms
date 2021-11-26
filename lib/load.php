@@ -13,7 +13,6 @@ use BDFGF\Helpers\FilterBulkAction;
 use BDFGF\Helpers\RowActions;
 use BDFGF\MetaBoxes\BulkDownload as BulkDownloadMetaBox;
 
-
 /**
  * Init function of the plugin
  */

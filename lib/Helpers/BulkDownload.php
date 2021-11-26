@@ -46,7 +46,7 @@ class BulkDownload {
 	/**
 	 * Handle bulk action file download from multiple entries.
 	 *
-	 * @param string $action Action being performed.
+	 * @param string $action  Action being performed.
 	 * @param array  $entries The entry IDs the action is being applied to.
 	 * @param int    $form_id The current form ID.
 	 */
@@ -64,7 +64,7 @@ class BulkDownload {
 	/**
 	 * Bulk download all files of an entry.
 	 *
-	 * @param int   $form_id The current form ID.
+	 * @param int   $form_id   The current form ID.
 	 * @param array $entry_ids Array of entry IDs.
 	 */
 	public function bulk_download( $form_id, $entry_ids ) {
@@ -119,7 +119,7 @@ class BulkDownload {
 	/**
 	 * Create download filename.
 	 *
-	 * @param object $form The form object.
+	 * @param object $form      The form object.
 	 * @param array  $entry_ids Array of entry IDs.
 	 *
 	 * @return string
@@ -144,16 +144,16 @@ class BulkDownload {
 	 * Get uploaded files.
 	 *
 	 * @param array $upload_fields Array of all uploaded_fields.
-	 * @param array $entry_ids Array of entry IDs.
+	 * @param array $entry_ids     Array of entry IDs.
 	 *
 	 * @return array
 	 */
 	public function get_uploaded_files( $upload_fields, $entry_ids ) {
 		$uploaded_files = [];
 		foreach ( $entry_ids as $entry_id ) {
-			$entry                       = GFAPI::get_entry( $entry_id );
-			$uploaded_files[ $entry_id ] = [];
+			$entry = GFAPI::get_entry( $entry_id );
 
+			$uploaded_files[ $entry_id ] = [];
 			foreach ( $upload_fields as $upload_field ) {
 				// If the field is a multi file upload, add all files from the JSON object to the array of uploaded files.
 				$field_files = json_decode( $entry[ $upload_field ] );
@@ -186,7 +186,7 @@ class BulkDownload {
 	 * Add files to zip.
 	 *
 	 * @param array      $uploaded_files Array of uploaded files.
-	 * @param ZipArchive $zip The zip Object.
+	 * @param ZipArchive $zip            The zip Object.
 	 *
 	 * @return ZipArchive
 	 */
@@ -201,6 +201,4 @@ class BulkDownload {
 
 		return $zip;
 	}
-
-
 }

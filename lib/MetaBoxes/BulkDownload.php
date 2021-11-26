@@ -37,11 +37,11 @@ class BulkDownload {
 		}
 
 		if ( FormFields::has_uploaded_files( $entry ) ) {
-			$meta_boxes['bulk_download'] = array(
+			$meta_boxes['bulk_download'] = [
 				'title'    => esc_html__( 'Bulk Download', 'bulk-download-for-gravity-forms' ),
 				'callback' => [ $this, 'render_meta_box' ],
 				'context'  => 'side',
-			);
+			];
 		}
 
 		return $meta_boxes;
@@ -56,16 +56,20 @@ class BulkDownload {
 	public function render_meta_box( $args, $metabox ) {
 		$entry = $args['entry'];
 
-		$link = sprintf(
-			'%s?page=gf_entries&action=gf_bulk_download&gf_entry_id=%s&gf_form_id=%s',
-			admin_url( 'admin.php' ),
-			esc_attr( $entry['id'] ),
-			esc_attr( $entry['form_id'] )
-		)
-		?>
-		<a class="button" aria-label="<?php esc_attr_e( 'Bulk download all files from this entry', 'bulk-download-for-gravity-forms' ); ?>" href="<?php echo esc_url( wp_nonce_url( $link, 'gf_bulk_download' ) ); ?>">
-			<?php esc_html_e( 'Download all files for this entry', 'bulk-download-for-gravity-forms' ); ?>
-		</a>
-		<?php
+		$link = add_query_arg(
+			[
+				'page'        => 'gf_entries',
+				'action'      => 'gf_bulk_download',
+				'gf_entry_id' => esc_attr( $entry['id'] ),
+				'gf_form_id'  => esc_attr( $entry['form_id'] ),
+			],
+			admin_url( 'admin.php' )
+		);
+
+		printf( '<a class="button" aria-label="%1$s" href="%2$s">%3$s</a>',
+			esc_attr__( 'Bulk download all files from this entry', 'bulk-download-for-gravity-forms' ),
+			esc_url( wp_nonce_url( $link, 'gf_bulk_download' ) ),
+			esc_html__( 'Bulk download all files', 'bulk-download-for-gravity-forms' )
+		);
 	}
 }

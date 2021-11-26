@@ -90,11 +90,14 @@ class DownloadMergeTag {
 			'<a href="%1$s">%2$s</a>',
 			esc_url(
 				wp_nonce_url(
-					sprintf(
-						'%s?page=gf_entries&action=gf_bulk_download&gf_entry_id=%s&gf_form_id=%s',
-						admin_url( 'admin.php' ),
-						esc_attr( $entry['id'] ),
-						esc_attr( $entry['form_id'] )
+					add_query_arg(
+						[
+							'page'        => 'gf_entries',
+							'action'      => 'gf_bulk_download',
+							'gf_entry_id' => esc_attr( $entry['id'] ),
+							'gf_form_id'  => esc_attr( $entry['form_id'] ),
+						],
+						admin_url( 'admin.php' )
 					),
 					'gf_bulk_download'
 				)
@@ -102,5 +105,4 @@ class DownloadMergeTag {
 			esc_html( $link_text )
 		);
 	}
-
 }

@@ -38,6 +38,14 @@ function bulk_download_for_gravity_forms_pre_init() {
 		return;
 	}
 
+	// Check, if the PHP ZIP extension is installed and the necessary class is available.
+	if ( ! class_exists( 'ZipArchive' ) ) {
+		add_action( 'admin_notices', 'bulk_download_for_gravity_forms_zip_extension_missing' );
+
+		// Stop the further processing of the plugin.
+		return;
+	}
+
 	if ( file_exists( BDFGF_PATH . 'composer.json' ) && ! file_exists( BDFGF_PATH . 'vendor/autoload.php' ) ) {
 		add_action( 'admin_notices', 'bulk_download_for_gravity_forms_autoloader_missing' );
 
@@ -56,19 +64,31 @@ function bulk_download_for_gravity_forms_pre_init() {
 }
 
 /**
- * Show a admin notice error message, if the PHP version is too low
+ * Show an admin notice error message, if the PHP version is too low.
  */
 function bulk_download_for_gravity_forms_min_php_version_error() {
-	echo '<div class="error"><p>';
-	esc_html_e( 'Bulk Download for Gravity Forms requires PHP version 5.6 or higher to function properly. Please upgrade PHP or deactivate Bulk Download for Gravity Forms.', 'bulk-download-for-gravity-forms' );
-	echo '</p></div>';
+	printf(
+		'<div class="error"><p>%s</p></div>',
+		esc_html__( 'Bulk Download for Gravity Forms requires PHP version 5.6 or higher to function properly. Please upgrade PHP or deactivate Bulk Download for Gravity Forms.', 'bulk-download-for-gravity-forms' )
+	);
 }
 
 /**
- * Show a admin notice error message, if the PHP version is too low
+ * Show an admin notice error message, if the Composer autoloader is missing.
+ */
+function bulk_download_for_gravity_forms_zip_extension_missing() {
+	printf(
+		'<div class="error"><p>%s</p></div>',
+		esc_html__( 'Bulk Download for Gravity Forms requires the PHP ZIP extension. Please activate it or ask your hoster to do so.', 'bulk-download-for-gravity-forms' )
+	);
+}
+
+/**
+ * Show an admin notice error message, if the Composer autoloader is missing.
  */
 function bulk_download_for_gravity_forms_autoloader_missing() {
-	echo '<div class="error"><p>';
-	esc_html_e( 'Bulk Download for Gravity Forms is missing the Composer autoloader file. Please run `composer install` in the root folder of the plugin or use a release version including the `vendor` folder.', 'bulk-download-for-gravity-forms' );
-	echo '</p></div>';
+	printf(
+		'<div class="error"><p>%s</p></div>',
+		esc_html__( 'Bulk Download for Gravity Forms is missing the Composer autoloader file. Please run `composer install` in the root folder of the plugin or use a release version including the `vendor` folder.', 'bulk-download-for-gravity-forms' )
+	);
 }
