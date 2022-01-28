@@ -1,10 +1,10 @@
 === Bulk Download for Gravity Forms ===
 
-Contributors: VCATconsulting, Kau-Boy, shogathu, nida78
+Contributors: VCATconsulting, Kau-Boy, shogathu, nida78, naapwe
 Requires at least: 5.0
-Tested up to: 5.8
+Tested up to: 5.9
 Requires PHP: 5.6
-Stable tag: 2.1.0
+Stable tag: 2.2.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -30,6 +30,11 @@ Therefore, it adds a download link to the list view, and an extra download butto
 4. A download link can be added to notifications using a merge tag
 
 == Changelog ==
+
+= 2.2.0 =
+
+* Adding a check if the ZIP extension is installed.
+* Use shorter labels for download buttons.
 
 = 2.1.0 =
 
