@@ -95,7 +95,7 @@ class BulkDownload {
 			$zip = new ZipArchive();
 			$zip->open( $zip_filename, ZipArchive::CREATE );
 
-			$this->zip_uplodead_files( $uploaded_files, $zip );
+			$this->zip_uploaded_files( $uploaded_files, $zip );
 
 			$zip->close();
 
@@ -190,7 +190,7 @@ class BulkDownload {
 	 *
 	 * @return ZipArchive
 	 */
-	public function zip_uplodead_files( $uploaded_files, $zip ) {
+	public function zip_uploaded_files( $uploaded_files, $zip ) {
 		foreach ( $uploaded_files as $entry_id => $entry_files ) {
 			foreach ( $entry_files as $uploaded_file ) {
 				if ( is_readable( $uploaded_file ) ) {
