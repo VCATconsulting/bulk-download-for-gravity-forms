@@ -66,7 +66,8 @@ class BulkDownload {
 			admin_url( 'admin.php' )
 		);
 
-		printf( '<a class="button" aria-label="%1$s" href="%2$s">%3$s</a>',
+		printf(
+			'<a class="button" aria-label="%1$s" href="%2$s">%3$s</a>',
 			esc_attr__( 'Bulk download all files from this entry', 'bulk-download-for-gravity-forms' ),
 			esc_url( wp_nonce_url( $link, 'gf_bulk_download' ) ),
 			esc_html__( 'Bulk download all files', 'bulk-download-for-gravity-forms' )

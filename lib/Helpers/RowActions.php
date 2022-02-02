@@ -46,7 +46,8 @@ class RowActions {
 				admin_url( 'admin.php' )
 			);
 
-			printf( '<span class="bulk-download"> | <a aria-label="%1$s" href="%2$s">%3$s</a></span>',
+			printf(
+				'<span class="bulk-download"> | <a aria-label="%1$s" href="%2$s">%3$s</a></span>',
 				esc_attr__( 'Bulk download all files from this entry', 'bulk-download-for-gravity-forms' ),
 				esc_url( wp_nonce_url( $link, 'gf_bulk_download' ) ),
 				esc_html__( 'Bulk Download', 'bulk-download-for-gravity-forms' )
