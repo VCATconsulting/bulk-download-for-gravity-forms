@@ -4,16 +4,18 @@ Contributors: VCATconsulting, Kau-Boy, shogathu, nida78, naapwe
 Requires at least: 5.0
 Tested up to: 5.9
 Requires PHP: 5.6
-Stable tag: 2.2.0
+Stable tag: 2.3.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
-Bulk download all files from a [Gravity Forms](https://www.gravityforms.com/ "visit Gravity Forms website") entry in one go.
+Bulk download all files from one or multiple Gravity Forms entries in one go.
 
 == Description ==
 
-This plugin is an add-on to the [Gravity Forms](https://www.gravityforms.com/ "visit Gravity Forms website") form builder plugin. It offers the opportunity to download all files from a single Gravity Forms entry with one click.
-Therefore, it adds a download link to the list view, and an extra download button to the single view of a Gravity Form entry. All files that are uploaded to the entry are collected and downloadable in a single ZIP file.
+This plugin is an add-on to the [Gravity Forms](https://www.gravityforms.com/ "visit Gravity Forms website") form builder plugin.
+It offers the opportunity to download all files from one or multiple Gravity Forms entries with one click.
+Therefore, it adds a download link to the list view, and an extra download button to the single view of a Gravity Form entry and a Bulk Action.
+All uploaded files are collected and downloadable in a single ZIP file.
 
 == Installation ==
 
@@ -29,7 +31,33 @@ Therefore, it adds a download link to the list view, and an extra download butto
 3. An extra button is added by the plugin at the right sidebar in the detail view of an entry
 4. A download link can be added to notifications using a merge tag
 
+== Frequently Asked Questions ==
+
+= Can I change the file name of the ZIP archive?
+
+The plugin has a filter called `bdfgf_download_filename` which you can use to change the zip archive name.
+You can find an example usage of this filter in [a small plugin in a GIST](https://gist.github.com/vcat-support/d0b817a4270c302d6325d76b0b67d017).
+
+= Can I change the file or folder name of the entries in the ZIP archive?
+
+The plugin has a filter called `bdfgf_entry_filename` which you can use to change the names.
+You can find an example usage of this filter in [a small plugin in a GIST](https://gist.github.com/vcat-support/b1716d96e131535917b2be368a8fd935).
+
+= When I try to bulk download the files, nothing happens. What can I do?
+
+Issues like these usually occur when your server has too low values for the `memory_limit` or `max_execution_time`.
+The plugin provides the filters `bdfgf_memory_limit` and `bdfgf_max_execution_time` to change these values.
+You can find example usage of the [memory_limit](https://gist.github.com/vcat-support/f3b52c6f248e6a2b9301adfa845f206f) filter
+and the [max_execution_time](https://gist.github.com/vcat-support/09d72df61d084ab3250d491408c1e824) filter in the two linked GISTs.
+
 == Changelog ==
+
+= 2.3.0 =
+
+* Increase memory_limit to 512M and add filter `bdfgf_memory_limit` to allow changes to the value.
+* Increase max_execution_time to 120 and add filter `bdfgf_max_execution_time` to allow changes to the value.
+* Add filter `bdfgf_download_filename` to allow changes to the zip archive file name.
+* Add filter `bdfgf_entry_filename` to allow changes to the entry file names added to the zip archive.
 
 = 2.2.0 =
 

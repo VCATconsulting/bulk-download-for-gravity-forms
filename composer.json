@@ -1,6 +1,6 @@
 {
   "name": "vcat/bulk-download-for-gravity-forms",
-  "description": "Bulk download al files from a Gravity Forms entry in one go.",
+  "description": "Bulk download all files from one or multiple Gravity Forms entries in one go.",
   "require": {
     "php": ">=5.6",
     "ext-zip": "*"
@@ -15,12 +15,8 @@
   "license": "GPL-3.0-or-later",
   "authors": [
     {
-      "name": "Bernhard Kau",
-      "email": "bernhard.kau@vcat.de"
-    },
-    {
-      "name": "Torsten Haendler",
-      "email": "torsten.haendler@vcat.de"
+      "name": "Team WordPress",
+      "email": "team.wp@vcat.de"
     }
   ],
   "minimum-stability": "stable",
