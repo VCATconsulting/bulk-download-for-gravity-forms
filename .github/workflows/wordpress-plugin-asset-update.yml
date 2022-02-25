@@ -5,7 +5,7 @@ on:
       - stable
 jobs:
   stable:
-    name: Push to trunk
+    name: Assets/Readme changes
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
