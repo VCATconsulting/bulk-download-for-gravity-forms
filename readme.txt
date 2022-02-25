@@ -14,6 +14,7 @@ Bulk download all files from one or multiple Gravity Forms entries in one go.
 
 This plugin is an add-on to the [Gravity Forms](https://www.gravityforms.com/ "visit Gravity Forms website") form builder plugin.
 It offers the opportunity to download all files from one or multiple Gravity Forms entries with one click.
+
 Therefore, it adds a download link to the list view, and an extra download button to the single view of a Gravity Form entry and a Bulk Action.
 All uploaded files are collected and downloadable in a single ZIP file.
 
