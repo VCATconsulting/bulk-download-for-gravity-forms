@@ -147,11 +147,22 @@ class BulkDownload {
 
 		$suffix = 1 === count( $entry_ids ) ? $entry_ids[0] : $form['id'];
 
-		return sprintf(
+		$filename = sprintf(
 			'%s-%d',
 			$form_title,
 			$suffix
 		);
+
+		/**
+		 * Filters the file name of the zip archive (without extension).
+		 *
+		 * @param string $filename  The current zip archive file name.
+		 * @param array  $form      The GF form array.
+		 * @param array  $entry_ids The entry IDs of all files being added to the archive.
+		 *
+		 * @return string
+		 */
+		return apply_filters( 'bdfgf_download_filename', $filename, $form, $entry_ids );
 	}
 
 	/**
@@ -208,7 +219,17 @@ class BulkDownload {
 		foreach ( $uploaded_files as $entry_id => $entry_files ) {
 			foreach ( $entry_files as $uploaded_file ) {
 				if ( is_readable( $uploaded_file ) ) {
-					$zip->addFile( $uploaded_file, $entry_id . '/' . basename( $uploaded_file ) );
+					/**
+					 * Filters the file name of the uploaded file used in the zip archive.
+					 *
+					 * @param string $entry_filename The current entry file name.
+					 * @param int    $entry_id       The ID of the GF entry.
+					 * @param string $uploaded_file  The file path to the uploaded file.
+					 *
+					 * @return string
+					 */
+					$entry_filename = apply_filters( 'bdfgf_entry_filename', $entry_id . '/' . basename( $uploaded_file ), $entry_id, $uploaded_file );
+					$zip->addFile( $uploaded_file, $entry_filename );
 				}
 			}
 		}
