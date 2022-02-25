@@ -36,19 +36,22 @@ All uploaded files are collected and downloadable in a single ZIP file.
 = Can I change the file name of the ZIP archive?
 
 The plugin has a filter called `bdfgf_download_filename` which you can use to change the zip archive name.
+
 You can find an example usage of this filter in [a small plugin in a GIST](https://gist.github.com/vcat-support/d0b817a4270c302d6325d76b0b67d017).
 
 = Can I change the file or folder name of the entries in the ZIP archive?
 
 The plugin has a filter called `bdfgf_entry_filename` which you can use to change the names.
+
 You can find an example usage of this filter in [a small plugin in a GIST](https://gist.github.com/vcat-support/b1716d96e131535917b2be368a8fd935).
 
 = When I try to bulk download the files, nothing happens. What can I do?
 
 Issues like these usually occur when your server has too low values for the `memory_limit` or `max_execution_time`.
+
 The plugin provides the filters `bdfgf_memory_limit` and `bdfgf_max_execution_time` to change these values.
-You can find example usage of the [memory_limit](https://gist.github.com/vcat-support/f3b52c6f248e6a2b9301adfa845f206f) filter
-and the [max_execution_time](https://gist.github.com/vcat-support/09d72df61d084ab3250d491408c1e824) filter in the two linked GISTs.
+
+You can find example usage of the [memory_limit](https://gist.github.com/vcat-support/f3b52c6f248e6a2b9301adfa845f206f) filter and the [max_execution_time](https://gist.github.com/vcat-support/09d72df61d084ab3250d491408c1e824) filter in the two linked GISTs.
 
 == Changelog ==
 
