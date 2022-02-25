@@ -25,6 +25,15 @@ class BulkDownload {
 	}
 
 	/**
+	 * Set a higher memory_limit using our own context with `wp_raise_memory_limit`.
+
+	 * @return string
+	 */
+	public function set_memory_limit() {
+		return '512M';
+	}
+
+	/**
 	 * Handle singke entry file download.
 	 */
 	public function handle_single_entry_download() {
@@ -75,6 +84,11 @@ class BulkDownload {
 		if ( empty( $entry_ids ) ) {
 			wp_die( esc_html( __( 'The entry IDs to perform a bulk download for are missing.', 'bulk-download-for-gravity-forms' ) ) );
 		}
+
+		// Increase some PHP limits.
+		add_filter( 'bdfgf_memory_limit', [ $this, 'set_memory_limit' ], 1 );
+		wp_raise_memory_limit( 'bdfgf' );
+		set_time_limit( apply_filters( 'bdfgf_max_execution_time', 120 ) );
 
 		// Get the form object.
 		$form = GFAPI::get_form( $form_id );
