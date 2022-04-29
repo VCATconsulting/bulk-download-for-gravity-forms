@@ -2,5 +2,5 @@
 /.env.testing
 /.wp-env.override.json
 /artifacts/
+/node_modules/
 /vendor/
-/node_modules
