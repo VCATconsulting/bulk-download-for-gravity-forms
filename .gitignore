@@ -1,4 +1,6 @@
-composer.lock
+*.lock
 /vendor/*
 !/vendor/autoload.php
 !/vendor/composer
+/artifacts
+/node_modules
