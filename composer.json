@@ -1,5 +1,5 @@
 {
-  "name": "vcat/bulk-download-for-gravity-forms",
+  "name": "bdfgf/bulk-download-for-gravity-forms",
   "description": "Bulk download all files from one or multiple Gravity Forms entries in one go.",
   "require": {
     "php": ">=5.6",
