@@ -5,18 +5,18 @@
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '7089d0778794cbd071d385ddbbd1204cb31967e7',
-        'name' => 'vcat/bulk-download-for-gravity-forms',
+        'reference' => '50bd64860796c8911e1b6c4c9dffc9b1242ce1d5',
+        'name' => 'bdfgf/bulk-download-for-gravity-forms',
         'dev' => false,
     ),
     'versions' => array(
-        'vcat/bulk-download-for-gravity-forms' => array(
+        'bdfgf/bulk-download-for-gravity-forms' => array(
             'pretty_version' => 'dev-develop',
             'version' => 'dev-develop',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '7089d0778794cbd071d385ddbbd1204cb31967e7',
+            'reference' => '50bd64860796c8911e1b6c4c9dffc9b1242ce1d5',
             'dev_requirement' => false,
         ),
     ),

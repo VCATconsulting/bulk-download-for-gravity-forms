@@ -4,3 +4,5 @@
 !/vendor/composer
 /artifacts
 /node_modules
+/.env.testing
+/.wp-env.override.json
