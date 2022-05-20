@@ -1,8 +1,6 @@
 *.lock
-/vendor/*
-!/vendor/autoload.php
-!/vendor/composer
-/artifacts
-/node_modules
 /.env.testing
 /.wp-env.override.json
+/artifacts/
+/vendor/
+/node_modules
