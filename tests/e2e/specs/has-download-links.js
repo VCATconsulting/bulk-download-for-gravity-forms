@@ -22,11 +22,17 @@ describe( 'Find download buttons', () => {
 		expect( bulkDownloadAction.length ).not.toEqual( 0 );
 
 		// Find download button on single entry.
-		await visitAdminPage( '/admin.php', 'page=gf_entries&view=entry&id=1&lid=1' );
+		const firstEntryLink = await page.$eval( '.entry_row .row-actions .edit a', ( el ) => el.href );
+		if ( firstEntryLink ) {
+			const firstEntryParams = firstEntryLink.split('?')[1];
+			await visitAdminPage( '/admin.php', firstEntryParams );
 
-		const singleEntryBulkDownloadLink = await page.$x(
-			'//div[@id="bulk_download"]//a[@class="button"]'
-		);
-		expect( singleEntryBulkDownloadLink.length ).not.toEqual( 0 );
+			const singleEntryBulkDownloadLink = await page.$x(
+				'//div[@id="bulk_download"]//a[@class="button"]'
+			);
+			expect( singleEntryBulkDownloadLink.length ).not.toEqual( 0 );
+		} else {
+			throw new Exception( 'Link not found' );
+		}
 	} );
 } );
