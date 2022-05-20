@@ -1,6 +1,6 @@
 <?php
 
-class PluginsActiveCest {
+class Step1PluginsActiveCest {
 	public function tryCheckActivePlugins( AcceptanceTester $I ) {
 		$I->loginAsAdmin();
 
