@@ -11,6 +11,5 @@ composer.json
 node_modules
 phpcs.xml
 tests
-vendor
 .wordpress-org
 yarn.lock

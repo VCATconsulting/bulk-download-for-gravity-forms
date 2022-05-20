@@ -55,6 +55,10 @@ You can find example usage of the [memory_limit](https://gist.github.com/vcat-su
 
 == Changelog ==
 
+= 2.4.1 =
+
+* Restore the vendor folder in the build made by Github actions
+
 = 2.4.0 =
 
 * Replace nonce check with a capability check to allow downloads using the mail links in multiple notifications.
