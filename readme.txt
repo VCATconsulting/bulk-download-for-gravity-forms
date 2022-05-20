@@ -2,9 +2,8 @@
 
 Contributors: VCATconsulting, Kau-Boy, shogathu, nida78, naapwe
 Requires at least: 5.0
-Tested up to: 5.9
+Tested up to: 6.0
 Requires PHP: 5.6
-Stable tag: 2.3.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -55,6 +54,10 @@ The plugin provides the filters `bdfgf_memory_limit` and `bdfgf_max_execution_ti
 You can find example usage of the [memory_limit](https://gist.github.com/vcat-support/f3b52c6f248e6a2b9301adfa845f206f) filter and the [max_execution_time](https://gist.github.com/vcat-support/09d72df61d084ab3250d491408c1e824) filter in the two linked GISTs.
 
 == Changelog ==
+
+= 2.4.0 =
+
+* Replace nonce check with a capability check to allow downloads using the mail links in multiple notifications.
 
 = 2.3.0 =
 
