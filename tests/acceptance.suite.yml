@@ -6,6 +6,7 @@
 # If you need both WPWebDriver and WPBrowser tests - create a separate suite.
 
 actor: AcceptanceTester
+bootstrap: bootstrap.php
 modules:
     enabled:
         - WPDb
