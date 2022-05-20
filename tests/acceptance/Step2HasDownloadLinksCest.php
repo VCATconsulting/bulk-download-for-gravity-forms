@@ -13,13 +13,11 @@ class Step2HasDownloadLinksCest {
 		$I->seeElement( '//div[@id="bulk_download"]//a[@class="button"]' );
 	}
 
-	public function tryDownloadZIP( AcceptanceTester $I ) {
+	public function tryDownloadZipWithResponse( AcceptanceTester $I ) {
 		$I->loginAsAdmin();
 
 		$I->amOnAdminPage( 'admin.php?page=gf_entries&id=1' );
-		$download = $I->click( '//tr[contains(@class, "entry_row")]//span[@class="bulk-download"]//a' );
-		$I->seeElement( '//div[@id="bulk_download"]//a[@class="button"]' );
-		var_dump($download);
-
+		$I->click( '//tr[contains(@class, "entry_row")]//span[@class="bulk-download"]//a' );
+		$I->seeFileInZipDownload('bernhard.kau@vcat.de/0e6baf5788de64013a42fae374a83dde2.jpeg');
 	}
 }
