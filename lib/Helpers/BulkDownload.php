@@ -34,22 +34,17 @@ class BulkDownload {
 	}
 
 	/**
-	 * Handle singke entry file download.
+	 * Handle single entry file download.
 	 */
 	public function handle_single_entry_download() {
-		if ( 'gf_bulk_download' === rgget( 'action' ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
-			if ( ! GFCommon::current_user_can_any( 'gravityforms_view_entries' ) ) {
-				die();
-			}
-
-			// Check permissions.
-			check_admin_referer( 'gf_bulk_download' );
-
-			$form_id   = (int) rgget( 'gf_form_id' );
-			$entry_ids = [ (int) rgget( 'gf_entry_id' ) ];
-
-			$this->bulk_download( $form_id, $entry_ids );
+		if ( 'gf_bulk_download' !== rgget( 'action' ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+			return;
 		}
+
+		$form_id   = (int) rgget( 'gf_form_id' );
+		$entry_ids = [ (int) rgget( 'gf_entry_id' ) ];
+
+		$this->bulk_download( $form_id, $entry_ids );
 	}
 
 	/**
@@ -83,6 +78,11 @@ class BulkDownload {
 
 		if ( empty( $entry_ids ) ) {
 			wp_die( esc_html( __( 'The entry IDs to perform a bulk download for are missing.', 'bulk-download-for-gravity-forms' ) ) );
+		}
+
+		// Check permissions.
+		if ( ! GFCommon::current_user_can_any( 'gravityforms_view_entries' ) ) {
+			wp_die( esc_html( __( 'You don\'t have the permission to bulk download files for this entry', 'bulk-download-for-gravity-forms' ) ) );
 		}
 
 		// Increase some PHP limits.
