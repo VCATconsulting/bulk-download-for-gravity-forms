@@ -26,7 +26,6 @@ class BulkDownload {
 
 	/**
 	 * Set a higher memory_limit using our own context with `wp_raise_memory_limit`.
-
 	 * @return string
 	 */
 	public function set_memory_limit() {
@@ -50,9 +49,9 @@ class BulkDownload {
 	/**
 	 * Handle bulk action file download from multiple entries.
 	 *
-	 * @param string $action  Action being performed.
-	 * @param array  $entries The entry IDs the action is being applied to.
-	 * @param int    $form_id The current form ID.
+	 * @param string $action Action being performed.
+	 * @param array $entries The entry IDs the action is being applied to.
+	 * @param int $form_id The current form ID.
 	 */
 	public function handle_bulk_action_download( $action, $entries, $form_id ) {
 		if ( 'gf_bulk_download' !== $action ) {
@@ -68,7 +67,7 @@ class BulkDownload {
 	/**
 	 * Bulk download all files of an entry.
 	 *
-	 * @param int   $form_id   The current form ID.
+	 * @param int $form_id The current form ID.
 	 * @param array $entry_ids Array of entry IDs.
 	 */
 	public function bulk_download( $form_id, $entry_ids ) {
@@ -133,8 +132,8 @@ class BulkDownload {
 	/**
 	 * Create download filename.
 	 *
-	 * @param object $form      The form object.
-	 * @param array  $entry_ids Array of entry IDs.
+	 * @param object $form The form object.
+	 * @param array $entry_ids Array of entry IDs.
 	 *
 	 * @return string
 	 */
@@ -153,12 +152,21 @@ class BulkDownload {
 			$suffix
 		);
 
+		if ( true === $form['bulkDownloadSettings']['customArchivename'] ) {
+			//TODO: apply filter is wrong her, must be fixed, textfield must be checked for mergetags and should be replaced
+			$new_archivename = apply_filters( 'gform_replace_merge_tags', $form['bulkDownloadSettings']['downloadArchivename'] );
+
+			if ( ! empty( $new_archivename ) ) {
+				$filename = $new_archivename;
+			}
+		}
+
 		/**
 		 * Filters the file name of the zip archive (without extension).
 		 *
-		 * @param string $filename  The current zip archive file name.
-		 * @param array  $form      The GF form array.
-		 * @param array  $entry_ids The entry IDs of all files being added to the archive.
+		 * @param string $filename The current zip archive file name.
+		 * @param array $form The GF form array.
+		 * @param array $entry_ids The entry IDs of all files being added to the archive.
 		 *
 		 * @return string
 		 */
@@ -169,7 +177,7 @@ class BulkDownload {
 	 * Get uploaded files.
 	 *
 	 * @param array $upload_fields Array of all uploaded_fields.
-	 * @param array $entry_ids     Array of entry IDs.
+	 * @param array $entry_ids Array of entry IDs.
 	 *
 	 * @return array
 	 */
@@ -210,8 +218,8 @@ class BulkDownload {
 	/**
 	 * Add files to zip.
 	 *
-	 * @param array      $uploaded_files Array of uploaded files.
-	 * @param ZipArchive $zip            The zip Object.
+	 * @param array $uploaded_files Array of uploaded files.
+	 * @param ZipArchive $zip The zip Object.
 	 *
 	 * @return ZipArchive
 	 */
@@ -223,8 +231,8 @@ class BulkDownload {
 					 * Filters the file name of the uploaded file used in the zip archive.
 					 *
 					 * @param string $entry_filename The current entry file name.
-					 * @param int    $entry_id       The ID of the GF entry.
-					 * @param string $uploaded_file  The file path to the uploaded file.
+					 * @param int $entry_id The ID of the GF entry.
+					 * @param string $uploaded_file The file path to the uploaded file.
 					 *
 					 * @return string
 					 */

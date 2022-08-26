@@ -50,7 +50,6 @@ class BulkDownloadFormSettingsPage {
 	 * @param $form_id
 	 *
 	 * @since 2.4
-	 *
 	 */
 	public static function form_settings( $form_id ) {
 
@@ -59,7 +58,6 @@ class BulkDownloadFormSettingsPage {
 		}
 
 		self::get_settings_renderer()->render();
-
 	}
 
 	/**
@@ -69,7 +67,6 @@ class BulkDownloadFormSettingsPage {
 	 *
 	 * @return array
 	 * @since 2.5
-	 *
 	 */
 	private static function settings_fields( $form_id ) {
 
@@ -82,21 +79,43 @@ class BulkDownloadFormSettingsPage {
 				'title'  => esc_html__( 'General Settings', 'bulk-download-for-gravity-forms' ),
 				'fields' => [
 					[
-						'name'    => 'customFilename',
+						'name'    => 'customArchivename',
 						'type'    => 'toggle',
 						'label'   => esc_html__( 'Set a custom (static) filename for the archive', 'bulk-download-for-gravity-forms' ),
-						'tooltip' => gform_tooltip( 'bulk_download_custom_filename', null, true ),
+						'tooltip' => gform_tooltip( 'bulk_download_custom_archivename', null, true ),
 					],
 					[
-						'name'       => 'downloadFilename',
+						'name'       => 'downloadArchivename',
 						'type'       => 'text',
+						'class'      => 'merge-tag-support mt-position-right mt-hide_all_fields',
 						'label'      => esc_html__( 'The name for the downloaded archive', 'bulk-download-for-gravity-forms' ),
-						'tooltip'    => gform_tooltip( 'bulk_download_download_filename', null, true ),
+						'tooltip'    => gform_tooltip( 'bulk_download_download_archivename', null, true ),
 						'dependency' => [
 							'live'   => true,
 							'fields' => [
 								[
-									'field' => 'customFilename',
+									'field' => 'customArchivename',
+								],
+							],
+						],
+					],
+					[
+						'name'    => 'customFoldername',
+						'type'    => 'toggle',
+						'label'   => esc_html__( 'Set a custom (static) filename for the files inside the archive', 'bulk-download-for-gravity-forms' ),
+						'tooltip' => gform_tooltip( 'bulk_download_custom_folderame', null, true ),
+					],
+					[
+						'name'       => 'downloadFoldername',
+						'type'       => 'text',
+						'class'      => 'merge-tag-support mt-position-right mt-hide_all_fields',
+						'label'      => esc_html__( 'The name for the foldername inside the downloaded archive', 'bulk-download-for-gravity-forms' ),
+						'tooltip'    => gform_tooltip( 'bulk_download_download_foldername', null, true ),
+						'dependency' => [
+							'live'   => true,
+							'fields' => [
+								[
+									'field' => 'customFoldername',
 								],
 							],
 						],
@@ -120,11 +139,11 @@ class BulkDownloadFormSettingsPage {
 		// Get form object.
 		$form = self::get_form( rgget( 'form_id' ) );
 
-		// Prevent IP address storage.
-		$form['bulkDownload']['preventIP'] = (bool) rgar( $values, 'preventIP' );
-
-		// Retention Policy
-		$form['bulkDownload']['retention'] = rgar( $values, 'retention' );
+		// Save settings.
+		$form['bulkDownloadSettings']['customArchivename'] = (bool) rgar( $values, 'customArchivename' );
+		$form['bulkDownloadSettings']['downloadArchivename'] = rgar( $values, 'downloadArchivename' );
+		$form['bulkDownloadSettings']['customFoldername'] = (bool) rgar( $values, 'customFoldername' );
+		$form['bulkDownloadSettings']['downloadFoldername'] = rgar( $values, 'downloadFoldername' );
 
 		// Save form.
 		GFAPI::update_form( $form );
@@ -150,8 +169,14 @@ class BulkDownloadFormSettingsPage {
 					'title' => esc_html__( 'Bulk Download', 'bulk-download-for-gravity-forms' ),
 				],
 				'fields'         => self::settings_fields( $form_id ),
-				'initial_values' => rgar( $form, 'bulkDownload' ),
+				'initial_values' => rgar( $form, 'bulkDownloadSettings' ),
 				'save_callback'  => [ self::class, 'process_form_settings' ],
+				'before_fields'  => function() use ( $form ) {
+					return sprintf( '
+						<script type="text/javascript">var form = %s;</script>',
+						wp_json_encode( $form )
+					);
+				},
 			]
 		);
 
