@@ -8,6 +8,7 @@
 namespace BDFGF\Helpers;
 
 use GFAPI;
+use GFCommon;
 use GFFormsModel;
 use Gravity_Forms\Gravity_Forms\Settings\Settings;
 use WP_Error;
@@ -20,16 +21,12 @@ class BulkDownloadFormSettingsPage {
 	/**
 	 * The cached form array.
 	 *
-	 * @since 2.4
-	 *
 	 * @var array $form
 	 */
 	private static $_form;
 
 	/**
 	 * The cached array of forms.
-	 *
-	 * @since 2.4
 	 *
 	 * @var array $forms
 	 */
@@ -38,8 +35,6 @@ class BulkDownloadFormSettingsPage {
 	/**
 	 * Stores the current instance of the Settings renderer.
 	 *
-	 * @since 2.5
-	 *
 	 * @var false|Settings
 	 */
 	private static $_settings_renderer = false;
@@ -47,12 +42,9 @@ class BulkDownloadFormSettingsPage {
 	/**
 	 * Renders the form settings.
 	 *
-	 * @param $form_id
-	 *
-	 * @since 2.4
+	 * @param int $form_id The form ID.
 	 */
 	public static function form_settings( $form_id ) {
-
 		if ( ! self::get_settings_renderer() ) {
 			self::initialize_settings_renderer();
 		}
@@ -66,13 +58,8 @@ class BulkDownloadFormSettingsPage {
 	 * @param int $form_id The current Form ID.
 	 *
 	 * @return array
-	 * @since 2.5
 	 */
 	private static function settings_fields( $form_id ) {
-
-		// Get form object.
-		$form = self::get_form( $form_id );
-
 		return [
 			[
 				'class'  => 'gform-settings-panel--full',
@@ -123,19 +110,14 @@ class BulkDownloadFormSettingsPage {
 				],
 			],
 		];
-
 	}
 
 	/**
 	 * Saves the form settings.
 	 *
 	 * @param array $values Submitted settings values.
-	 *
-	 * @since 2.4
-	 *
 	 */
 	public static function process_form_settings( $values ) {
-
 		// Get form object.
 		$form = self::get_form( rgget( 'form_id' ) );
 
@@ -150,14 +132,12 @@ class BulkDownloadFormSettingsPage {
 
 		// Update cached form object.
 		self::$_form = $form;
-
 	}
 
 	/**
 	 * Initializes the Settings renderer at the beginning of page load.
 	 */
 	public static function initialize_settings_renderer() {
-
 		// Get form object.
 		$form_id = absint( rgget( 'id' ) );
 		$form    = self::get_form( $form_id );
@@ -186,20 +166,15 @@ class BulkDownloadFormSettingsPage {
 		if ( self::get_settings_renderer()->is_save_postback() ) {
 			self::get_settings_renderer()->process_postback();
 		}
-
 	}
 
 	/**
 	 * Gets the current instance of Settings handling settings rendering.
 	 *
 	 * @return false|\Gravity_Forms\Gravity_Forms\Settings
-	 * @since 2.5
-	 *
 	 */
 	private static function get_settings_renderer() {
-
 		return self::$_settings_renderer;
-
 	}
 
 	/**
@@ -208,12 +183,9 @@ class BulkDownloadFormSettingsPage {
 	 * @param \Gravity_Forms\Gravity_Forms\Settings\Settings $renderer Settings renderer.
 	 *
 	 * @return bool|WP_Error
-	 * @since 2.5
-	 *
 	 */
 	private static function set_settings_renderer( $renderer ) {
-
-		// Ensure renderer is an instance of Settings
+		// Ensure renderer is an instance of Settings.
 		if ( ! is_a( $renderer, 'Gravity_Forms\Gravity_Forms\Settings\Settings' ) ) {
 			return new WP_Error( 'Renderer must be an instance of Gravity_Forms\Gravity_Forms\Settings\Settings.' );
 		}
@@ -221,18 +193,14 @@ class BulkDownloadFormSettingsPage {
 		self::$_settings_renderer = $renderer;
 
 		return true;
-
 	}
-
 
 	/**
 	 * Returns the form array for use in the form settings.
 	 *
-	 * @param int $form_id
+	 * @param int $form_id The form ID.
 	 *
 	 * @return array|mixed
-	 * @since 2.4
-	 *
 	 */
 	public static function get_form( $form_id ) {
 		if ( empty( self::$_form ) ) {
@@ -246,11 +214,8 @@ class BulkDownloadFormSettingsPage {
 	 * Returns an associative array of all the form metas with the form ID as the key.
 	 *
 	 * @return array|null
-	 * @since 2.4
-	 *
 	 */
 	public static function get_forms() {
-
 		if ( is_null( self::$_forms ) ) {
 			$form_ids = GFFormsModel::get_form_ids( null );
 
@@ -272,14 +237,10 @@ class BulkDownloadFormSettingsPage {
 		return self::$_forms;
 	}
 
-
 	/**
 	 * Writes a message to the debug log
 	 *
-	 * @param $message
-	 *
-	 * @since 2.4
-	 *
+	 * @param string $message Message to log.
 	 */
 	public static function log_debug( $message ) {
 		GFCommon::log_debug( $message );

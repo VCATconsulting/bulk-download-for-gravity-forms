@@ -22,11 +22,11 @@ class AdminSettings {
 	/**
 	 * Initialize all of the admin settings based on the current admin page.
 	 */
-	public function initialize_admin_settings(  ) {
+	public function initialize_admin_settings() {
 		$gf_page = self::get_page();
 
 		// Initialize Personal Data settings.
-		if ( $gf_page === 'bulk_download_edit' ) {
+		if ( 'bulk_download_edit' === $gf_page ) {
 			BulkDownloadFormSettingsPage::initialize_settings_renderer();
 		}
 	}
@@ -35,7 +35,7 @@ class AdminSettings {
 	 * Gets current page name.
 	 */
 	public static function get_page() {
-		if ( rgget( 'page' ) == 'gf_edit_forms' && rgget( 'view' ) == 'settings' && rgget( 'subview' ) == 'bulk_download' ) {
+		if ( 'gf_edit_forms' === rgget( 'page' ) && 'settings' === rgget( 'view' ) && 'bulk_download' === rgget( 'subview' ) ) {
 			return 'bulk_download_edit';
 		}
 	}
