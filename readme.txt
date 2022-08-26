@@ -55,6 +55,10 @@ You can find example usage of the [memory_limit](https://gist.github.com/vcat-su
 
 == Changelog ==
 
+= 2.5.0 =
+
+* Use the `gf_apply_filters()` functions to allow filtering of values based on a form ID
+
 = 2.4.1 =
 
 * Restore the vendor folder in the build made by Github actions
