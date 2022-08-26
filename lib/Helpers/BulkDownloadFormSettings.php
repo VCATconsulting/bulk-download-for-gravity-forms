@@ -42,10 +42,9 @@ class BulkDownloadFormSettings {
 	/**
 	 * Render the settings page.
 	 *
-	 * @param string $subview Used to complete the action name, allowing an additional subview to be detected
+	 * @param string $subview Used to complete the action name, allowing an additional subview to be detected.
 	 */
 	public function settings_page( $subview ) {
-
 		GFFormSettings::page_header( __( 'Bulk Download', 'bulk-download-for-gravity-forms' ) );
 
 		$form_id = absint( rgget( 'id' ) );
@@ -54,5 +53,4 @@ class BulkDownloadFormSettings {
 
 		GFFormSettings::page_footer();
 	}
-
 }

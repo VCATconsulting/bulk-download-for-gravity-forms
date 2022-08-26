@@ -46,6 +46,9 @@ function init() {
 
 add_action( 'plugins_loaded', 'BDFGF\init' );
 
+/**
+ * Initialize the GF addon.
+ */
 function init_gform_addon() {
 	// Include the Gravity Forms add-on framework.
 	GFForms::include_addon_framework();
