@@ -14,9 +14,6 @@ use BDFGF\Helpers\DownloadMergeTag;
 use BDFGF\Helpers\FilterBulkAction;
 use BDFGF\Helpers\RowActions;
 use BDFGF\MetaBoxes\BulkDownload as BulkDownloadMetaBox;
-use BulkDownloadAddon;
-use GFAddOn;
-use GFForms;
 
 /**
  * Init function of the plugin
@@ -47,15 +44,3 @@ function init() {
 }
 
 add_action( 'plugins_loaded', 'BDFGF\init' );
-
-/**
- * Initialize the GF addon.
- */
-function init_gform_addon() {
-	// Include the Gravity Forms add-on framework.
-	GFForms::include_addon_framework();
-	// Register our addon.
-	GFAddOn::register( BulkDownloadAddon::class );
-}
-
-add_action( 'gform_loaded', 'BDFGF\init_gform_addon', 1 );
