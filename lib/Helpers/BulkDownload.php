@@ -26,7 +26,7 @@ class BulkDownload {
 
 	/**
 	 * Set a higher memory_limit using our own context with `wp_raise_memory_limit`.
-
+	 *
 	 * @return string
 	 */
 	public function set_memory_limit() {
@@ -109,7 +109,7 @@ class BulkDownload {
 			$zip = new ZipArchive();
 			$zip->open( $zip_filename, ZipArchive::CREATE );
 
-			$this->zip_uploaded_files( $uploaded_files, $zip );
+			$this->zip_uploaded_files( $uploaded_files, $zip, $form );
 
 			$zip->close();
 
@@ -162,7 +162,7 @@ class BulkDownload {
 		 *
 		 * @return string
 		 */
-		return apply_filters( 'bdfgf_download_filename', $filename, $form, $entry_ids );
+		return gf_apply_filters( [ 'bdfgf_download_filename', $form['id'] ], $filename, $form, $entry_ids );
 	}
 
 	/**
@@ -212,10 +212,11 @@ class BulkDownload {
 	 *
 	 * @param array      $uploaded_files Array of uploaded files.
 	 * @param ZipArchive $zip            The zip Object.
+	 * @param array      $form           The form Object.
 	 *
 	 * @return ZipArchive
 	 */
-	public function zip_uploaded_files( $uploaded_files, $zip ) {
+	public function zip_uploaded_files( $uploaded_files, $zip, $form ) {
 		foreach ( $uploaded_files as $entry_id => $entry_files ) {
 			foreach ( $entry_files as $uploaded_file ) {
 				if ( is_readable( $uploaded_file ) ) {
@@ -228,7 +229,7 @@ class BulkDownload {
 					 *
 					 * @return string
 					 */
-					$entry_filename = apply_filters( 'bdfgf_entry_filename', $entry_id . '/' . basename( $uploaded_file ), $entry_id, $uploaded_file );
+					$entry_filename = gf_apply_filters( [ 'bdfgf_entry_filename', $form['id'] ], $entry_id . '/' . basename( $uploaded_file ), $entry_id, $uploaded_file );
 					$zip->addFile( $uploaded_file, $entry_filename );
 				}
 			}
