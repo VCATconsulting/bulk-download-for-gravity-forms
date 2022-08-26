@@ -15,6 +15,8 @@ use WP_Error;
 
 /**
  * Class BulkDownloadFormSettingsPage
+ *
+ * @phpcs:disable PSR2.Classes.PropertyDeclaration.Underscore
  */
 class BulkDownloadFormSettingsPage {
 
@@ -122,10 +124,10 @@ class BulkDownloadFormSettingsPage {
 		$form = self::get_form( rgget( 'form_id' ) );
 
 		// Save settings.
-		$form['bulkDownloadSettings']['customArchivename'] = (bool) rgar( $values, 'customArchivename' );
+		$form['bulkDownloadSettings']['customArchivename']   = (bool) rgar( $values, 'customArchivename' );
 		$form['bulkDownloadSettings']['downloadArchivename'] = rgar( $values, 'downloadArchivename' );
-		$form['bulkDownloadSettings']['customFoldername'] = (bool) rgar( $values, 'customFoldername' );
-		$form['bulkDownloadSettings']['downloadFoldername'] = rgar( $values, 'downloadFoldername' );
+		$form['bulkDownloadSettings']['customFoldername']    = (bool) rgar( $values, 'customFoldername' );
+		$form['bulkDownloadSettings']['downloadFoldername']  = rgar( $values, 'downloadFoldername' );
 
 		// Save form.
 		GFAPI::update_form( $form );
@@ -152,8 +154,8 @@ class BulkDownloadFormSettingsPage {
 				'initial_values' => rgar( $form, 'bulkDownloadSettings' ),
 				'save_callback'  => [ self::class, 'process_form_settings' ],
 				'before_fields'  => function() use ( $form ) {
-					return sprintf( '
-						<script type="text/javascript">var form = %s;</script>',
+					return sprintf(
+						'<script type="text/javascript">var form = %s;</script>',
 						wp_json_encode( $form )
 					);
 				},
@@ -171,7 +173,7 @@ class BulkDownloadFormSettingsPage {
 	/**
 	 * Gets the current instance of Settings handling settings rendering.
 	 *
-	 * @return false|\Gravity_Forms\Gravity_Forms\Settings
+	 * @return false|Settings
 	 */
 	private static function get_settings_renderer() {
 		return self::$_settings_renderer;
@@ -180,7 +182,7 @@ class BulkDownloadFormSettingsPage {
 	/**
 	 * Sets the current instance of Settings handling settings rendering.
 	 *
-	 * @param \Gravity_Forms\Gravity_Forms\Settings\Settings $renderer Settings renderer.
+	 * @param Settings $renderer Settings renderer.
 	 *
 	 * @return bool|WP_Error
 	 */
@@ -248,8 +250,6 @@ class BulkDownloadFormSettingsPage {
 
 	/**
 	 * Flushes the forms
-	 *
-	 * @since 2.4
 	 */
 	public static function flush_current_forms() {
 		self::$_forms = null;

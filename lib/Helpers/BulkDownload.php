@@ -26,6 +26,7 @@ class BulkDownload {
 
 	/**
 	 * Set a higher memory_limit using our own context with `wp_raise_memory_limit`.
+	 *
 	 * @return string
 	 */
 	public function set_memory_limit() {
@@ -49,9 +50,9 @@ class BulkDownload {
 	/**
 	 * Handle bulk action file download from multiple entries.
 	 *
-	 * @param string $action Action being performed.
-	 * @param array $entries The entry IDs the action is being applied to.
-	 * @param int $form_id The current form ID.
+	 * @param string $action  Action being performed.
+	 * @param array  $entries The entry IDs the action is being applied to.
+	 * @param int    $form_id The current form ID.
 	 */
 	public function handle_bulk_action_download( $action, $entries, $form_id ) {
 		if ( 'gf_bulk_download' !== $action ) {
@@ -67,7 +68,7 @@ class BulkDownload {
 	/**
 	 * Bulk download all files of an entry.
 	 *
-	 * @param int $form_id The current form ID.
+	 * @param int   $form_id   The current form ID.
 	 * @param array $entry_ids Array of entry IDs.
 	 */
 	public function bulk_download( $form_id, $entry_ids ) {
@@ -108,7 +109,7 @@ class BulkDownload {
 			$zip = new ZipArchive();
 			$zip->open( $zip_filename, ZipArchive::CREATE );
 
-			$this->zip_uploaded_files( $uploaded_files, $zip );
+			$this->zip_uploaded_files( $uploaded_files, $zip, $form );
 
 			$zip->close();
 
@@ -128,12 +129,11 @@ class BulkDownload {
 		die();
 	}
 
-
 	/**
 	 * Create download filename.
 	 *
-	 * @param object $form The form object.
-	 * @param array $entry_ids Array of entry IDs.
+	 * @param object $form      The form object.
+	 * @param array  $entry_ids Array of entry IDs.
 	 *
 	 * @return string
 	 */
@@ -152,21 +152,25 @@ class BulkDownload {
 			$suffix
 		);
 
-		if ( true === $form['bulkDownloadSettings']['customArchivename'] ) {
-			//TODO: apply filter is wrong her, must be fixed, textfield must be checked for mergetags and should be replaced
-			$new_archivename = apply_filters( 'gform_replace_merge_tags', $form['bulkDownloadSettings']['downloadArchivename'] );
+		// Check if the form has a custom filename definded in the settings.
+		if ( isset( $form['bulkDownloadSettings']['customArchivename'] ) && true === $form['bulkDownloadSettings']['customArchivename'] ) {
+			// Get the first entry.
+			$first_entry = isset( $entry_ids[0] ) ? GFAPI::get_entry( $entry_ids[0] ) : null;
+			// Replace all merge tags.
+			$new_archive_name = GFCommon::replace_variables( $form['bulkDownloadSettings']['downloadArchivename'], $form, $first_entry );
 
-			if ( ! empty( $new_archivename ) ) {
-				$filename = $new_archivename;
+			// The new archive name could be parsed and does not contain any merge tags, overwrite the filename.
+			if ( ! empty( $new_archive_name ) && false === strpos( $new_archive_name, '{' ) ) {
+				$filename = $new_archive_name;
 			}
 		}
 
 		/**
 		 * Filters the file name of the zip archive (without extension).
 		 *
-		 * @param string $filename The current zip archive file name.
-		 * @param array $form The GF form array.
-		 * @param array $entry_ids The entry IDs of all files being added to the archive.
+		 * @param string $filename  The current zip archive file name.
+		 * @param array  $form      The GF form array.
+		 * @param array  $entry_ids The entry IDs of all files being added to the archive.
 		 *
 		 * @return string
 		 */
@@ -177,7 +181,7 @@ class BulkDownload {
 	 * Get uploaded files.
 	 *
 	 * @param array $upload_fields Array of all uploaded_fields.
-	 * @param array $entry_ids Array of entry IDs.
+	 * @param array $entry_ids     Array of entry IDs.
 	 *
 	 * @return array
 	 */
@@ -218,25 +222,42 @@ class BulkDownload {
 	/**
 	 * Add files to zip.
 	 *
-	 * @param array $uploaded_files Array of uploaded files.
-	 * @param ZipArchive $zip The zip Object.
+	 * @param array      $uploaded_files Array of uploaded files.
+	 * @param ZipArchive $zip            The zip Object.
+	 * @param object     $form           The form object.
 	 *
 	 * @return ZipArchive
 	 */
-	public function zip_uploaded_files( $uploaded_files, $zip ) {
+	public function zip_uploaded_files( $uploaded_files, $zip, $form ) {
 		foreach ( $uploaded_files as $entry_id => $entry_files ) {
 			foreach ( $entry_files as $uploaded_file ) {
 				if ( is_readable( $uploaded_file ) ) {
+					// Define a default entry file name using the entry ID as the folder name.
+					$entry_filename = $entry_id . '/' . basename( $uploaded_file );
+
+					// Check if the form has a custom filename definded in the settings.
+					if ( isset( $form['bulkDownloadSettings']['customFoldername'] ) && true === $form['bulkDownloadSettings']['customFoldername'] ) {
+						// Get the entry.
+						$entry = GFAPI::get_entry( $entry_id );
+						// Replace all merge tags.
+						$new_folder_name = GFCommon::replace_variables( $form['bulkDownloadSettings']['downloadFoldername'], $form, $entry );
+
+						// The new archive name could be parsed and does not contain any merge tags, overwrite the filename.
+						if ( ! empty( $new_folder_name ) && false === strpos( $new_folder_name, '{' ) ) {
+							$entry_filename = $new_folder_name . '/' . basename( $uploaded_file );
+						}
+					}
+
 					/**
 					 * Filters the file name of the uploaded file used in the zip archive.
 					 *
 					 * @param string $entry_filename The current entry file name.
-					 * @param int $entry_id The ID of the GF entry.
-					 * @param string $uploaded_file The file path to the uploaded file.
+					 * @param int    $entry_id       The ID of the GF entry.
+					 * @param string $uploaded_file  The file path to the uploaded file.
 					 *
 					 * @return string
 					 */
-					$entry_filename = apply_filters( 'bdfgf_entry_filename', $entry_id . '/' . basename( $uploaded_file ), $entry_id, $uploaded_file );
+					$entry_filename = apply_filters( 'bdfgf_entry_filename', $entry_filename, $entry_id, $uploaded_file );
 					$zip->addFile( $uploaded_file, $entry_filename );
 				}
 			}

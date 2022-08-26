@@ -27,11 +27,11 @@ function init() {
 	// Construct all modules to initialize.
 	$modules = [
 		'helpers_admin_settings'              => new AdminSettings(),
-		'filter_bulk_download'                => new FilterBulkAction(),
-		'helpers_bulk_download_form_settings' => new BulkDownloadFormSettings(),
 		'helpers_bulk_download'               => new BulkDownload(),
+		'helpers_bulk_download_form_settings' => new BulkDownloadFormSettings(),
+		'helpers_download_merge_tag'          => new DownloadMergeTag(),
+		'helpers_filter_bulk_download'        => new FilterBulkAction(),
 		'helpers_row_actions'                 => new RowActions(),
-		'download_merge_tag'                  => new DownloadMergeTag(),
 		'meta_boxes_bulk_download'            => new BulkDownloadMetaBox(),
 	];
 
