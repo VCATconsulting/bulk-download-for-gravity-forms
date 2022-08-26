@@ -7,6 +7,7 @@
 
 namespace BDFGF;
 
+use BDFGF\Helpers\AdminSettings;
 use BDFGF\Helpers\BulkDownload;
 use BDFGF\Helpers\BulkDownloadFormSettings;
 use BDFGF\Helpers\DownloadMergeTag;
@@ -28,6 +29,7 @@ function init() {
 
 	// Construct all modules to initialize.
 	$modules = [
+		'helpers_admin_settings'              => new AdminSettings(),
 		'filter_bulk_download'                => new FilterBulkAction(),
 		'helpers_bulk_download_form_settings' => new BulkDownloadFormSettings(),
 		'helpers_bulk_download'               => new BulkDownload(),
