@@ -174,7 +174,7 @@ class BulkDownload {
 		 *
 		 * @return string
 		 */
-		return apply_filters( 'bdfgf_download_filename', $filename, $form, $entry_ids );
+		return gf_apply_filters( [ 'bdfgf_download_filename', $form['id'] ], $filename, $form, $entry_ids );
 	}
 
 	/**
@@ -224,7 +224,7 @@ class BulkDownload {
 	 *
 	 * @param array      $uploaded_files Array of uploaded files.
 	 * @param ZipArchive $zip            The zip Object.
-	 * @param object     $form           The form object.
+	 * @param array      $form           The form Object.
 	 *
 	 * @return ZipArchive
 	 */
@@ -257,7 +257,7 @@ class BulkDownload {
 					 *
 					 * @return string
 					 */
-					$entry_filename = apply_filters( 'bdfgf_entry_filename', $entry_filename, $entry_id, $uploaded_file );
+					$entry_filename = gf_apply_filters( [ 'bdfgf_entry_filename', $form['id'] ], $entry_filename, $entry_id, $uploaded_file );
 					$zip->addFile( $uploaded_file, $entry_filename );
 				}
 			}
