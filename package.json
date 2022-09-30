@@ -1,0 +1,14 @@
+{
+  "name": "@bdfgf/bulk-download-for-gravity-forms",
+  "scripts": {
+    "env:start": "wp-env start",
+    "test:e2e": "wp-scripts test-e2e",
+    "test:e2e:help": "wp-scripts test-e2e --help",
+    "test:e2e:debug": "wp-scripts --inspect-brk test-e2e --puppeteer-devtools"
+  },
+  "devDependencies": {
+    "@wordpress/e2e-test-utils": "^7.3.0",
+    "@wordpress/env": "^4.6.0",
+    "@wordpress/scripts": "^22.5.0"
+  }
+}

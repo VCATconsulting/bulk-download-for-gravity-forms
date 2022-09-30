@@ -129,7 +129,6 @@ class BulkDownload {
 		die();
 	}
 
-
 	/**
 	 * Create download filename.
 	 *
@@ -152,6 +151,19 @@ class BulkDownload {
 			$form_title,
 			$suffix
 		);
+
+		// Check if the form has a custom filename definded in the settings.
+		if ( isset( $form['bulkDownloadSettings']['customArchivename'] ) && true === $form['bulkDownloadSettings']['customArchivename'] ) {
+			// Get the first entry.
+			$first_entry = isset( $entry_ids[0] ) ? GFAPI::get_entry( $entry_ids[0] ) : null;
+			// Replace all merge tags.
+			$new_archive_name = GFCommon::replace_variables( $form['bulkDownloadSettings']['downloadArchivename'], $form, $first_entry );
+
+			// The new archive name could be parsed and does not contain any merge tags, overwrite the filename.
+			if ( ! empty( $new_archive_name ) && false === strpos( $new_archive_name, '{' ) ) {
+				$filename = $new_archive_name;
+			}
+		}
 
 		/**
 		 * Filters the file name of the zip archive (without extension).
@@ -220,6 +232,22 @@ class BulkDownload {
 		foreach ( $uploaded_files as $entry_id => $entry_files ) {
 			foreach ( $entry_files as $uploaded_file ) {
 				if ( is_readable( $uploaded_file ) ) {
+					// Define a default entry file name using the entry ID as the folder name.
+					$entry_filename = $entry_id . '/' . basename( $uploaded_file );
+
+					// Check if the form has a custom filename definded in the settings.
+					if ( isset( $form['bulkDownloadSettings']['customFoldername'] ) && true === $form['bulkDownloadSettings']['customFoldername'] ) {
+						// Get the entry.
+						$entry = GFAPI::get_entry( $entry_id );
+						// Replace all merge tags.
+						$new_folder_name = GFCommon::replace_variables( $form['bulkDownloadSettings']['downloadFoldername'], $form, $entry );
+
+						// The new archive name could be parsed and does not contain any merge tags, overwrite the filename.
+						if ( ! empty( $new_folder_name ) && false === strpos( $new_folder_name, '{' ) ) {
+							$entry_filename = $new_folder_name . '/' . basename( $uploaded_file );
+						}
+					}
+
 					/**
 					 * Filters the file name of the uploaded file used in the zip archive.
 					 *
@@ -229,7 +257,7 @@ class BulkDownload {
 					 *
 					 * @return string
 					 */
-					$entry_filename = gf_apply_filters( [ 'bdfgf_entry_filename', $form['id'] ], $entry_id . '/' . basename( $uploaded_file ), $entry_id, $uploaded_file );
+					$entry_filename = gf_apply_filters( [ 'bdfgf_entry_filename', $form['id'] ], $entry_filename, $entry_id, $uploaded_file );
 					$zip->addFile( $uploaded_file, $entry_filename );
 				}
 			}

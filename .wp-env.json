@@ -1,0 +1,8 @@
+{
+  "core": "https://wordpress.org/wordpress-latest.zip",
+  "plugins": [
+    ".",
+    "../gravityforms/",
+    "https://downloads.wordpress.org/plugins/gravityformscli.zip"
+  ]
+}
