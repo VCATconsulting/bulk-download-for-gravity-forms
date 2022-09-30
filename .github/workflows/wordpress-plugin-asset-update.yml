@@ -8,6 +8,15 @@ jobs:
     name: Assets/Readme changes
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      # Build the composer files as well, so the check for files modified other than the readme does not fail.
+      - name: Composer install
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 5.6
+      - run: composer install --no-dev --ignore-platform-reqs --optimize-autoloader
+
       - uses: actions/checkout@master
       - name: WordPress.org plugin asset/readme update
         uses: 10up/action-wordpress-plugin-asset-update@stable
