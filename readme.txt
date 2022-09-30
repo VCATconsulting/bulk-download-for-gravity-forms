@@ -30,6 +30,7 @@ All uploaded files are collected and downloadable in a single ZIP file.
 2. There is also a Bulk Action to download all files from multiple entries
 3. An extra button is added by the plugin at the right sidebar in the detail view of an entry
 4. A download link can be added to notifications using a merge tag
+5. The form specific settings page to overwrite file and folder names
 
 == Frequently Asked Questions ==
 
