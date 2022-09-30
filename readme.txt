@@ -62,8 +62,8 @@ You can find example usage of the [memory_limit](https://gist.github.com/vcat-su
 = 3.0.0 =
 
 * Introducing a settings page per form.
-* Adding a settings to overwrite the zip archive file name.
-* Adding a settings to overwrite the entry folder names in the zip archive.
+* Adding a setting to overwrite the zip archive file name.
+* Adding a setting to overwrite the entry folder names in the zip archive.
 
 = 2.5.0 =
 
