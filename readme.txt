@@ -35,13 +35,17 @@ All uploaded files are collected and downloadable in a single ZIP file.
 
 = Can I change the file name of the ZIP archive?
 
-The plugin has a filter called `bdfgf_download_filename` which you can use to change the zip archive name.
+You can use the settings page from this option to overwrite the zip archive name. In this option you can also use merge tags from your form.
+
+The plugin also offers a filter called `bdfgf_download_filename` which you can use to change the zip archive name.
 
 You can find an example usage of this filter in [a small plugin in a GIST](https://gist.github.com/vcat-support/d0b817a4270c302d6325d76b0b67d017).
 
 = Can I change the file or folder name of the entries in the ZIP archive?
 
-The plugin has a filter called `bdfgf_entry_filename` which you can use to change the names.
+You can use the settings page from this option to overwrite the folder name. In this option you can also use merge tags from your form.
+
+The plugin also offers a filter called `bdfgf_entry_filename` which you can use to change the names.
 
 You can find an example usage of this filter in [a small plugin in a GIST](https://gist.github.com/vcat-support/b1716d96e131535917b2be368a8fd935).
 
@@ -54,6 +58,12 @@ The plugin provides the filters `bdfgf_memory_limit` and `bdfgf_max_execution_ti
 You can find example usage of the [memory_limit](https://gist.github.com/vcat-support/f3b52c6f248e6a2b9301adfa845f206f) filter and the [max_execution_time](https://gist.github.com/vcat-support/09d72df61d084ab3250d491408c1e824) filter in the two linked GISTs.
 
 == Changelog ==
+
+= 3.0.0 =
+
+* Introducing a settings page per form.
+* Adding a settings to overwrite the zip archive file name.
+* Adding a settings to overwrite the entry folder names in the zip archive.
 
 = 2.5.0 =
 
@@ -72,7 +82,7 @@ You can find example usage of the [memory_limit](https://gist.github.com/vcat-su
 * Increase memory_limit to 512M and add filter `bdfgf_memory_limit` to allow changes to the value.
 * Increase max_execution_time to 120 and add filter `bdfgf_max_execution_time` to allow changes to the value.
 * Add filter `bdfgf_download_filename` to allow changes to the zip archive file name.
-* Add filter `bdfgf_entry_filename` to allow changes to the entry file names added to the zip archive.
+* Add filter `bdfgf_entry_filename` to allow changes to the entry folder names added to the zip archive.
 
 = 2.2.0 =
 
