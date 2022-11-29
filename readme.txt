@@ -58,6 +58,10 @@ The plugin provides the filters `bdfgf_memory_limit` and `bdfgf_max_execution_ti
 
 You can find example usage of the [memory_limit](https://gist.github.com/vcat-support/f3b52c6f248e6a2b9301adfa845f206f) filter and the [max_execution_time](https://gist.github.com/vcat-support/09d72df61d084ab3250d491408c1e824) filter in the two linked GISTs.
 
+= Can I influence the permissions to download files in bulk?
+
+By default only logged in users with the `gravityforms_view_entries` capability are allowed to download files in bulk. You can use the `bdfgf_download_permission` filter to expand permission check.
+
 == Changelog ==
 
 = 3.0.0 =
