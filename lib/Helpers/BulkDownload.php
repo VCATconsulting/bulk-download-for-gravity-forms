@@ -99,6 +99,10 @@ class BulkDownload {
 		// Get the form object.
 		$form = GFAPI::get_form( $form_id );
 
+		if ( empty( $form ) ) {
+			wp_die( esc_html__( 'Form not found.', 'bulk-download-for-gravity-forms' ) );
+		}
+
 		// Create a nice filename for the download.
 		$download_filename = $this->get_download_filename( $form, $entry_ids );
 
