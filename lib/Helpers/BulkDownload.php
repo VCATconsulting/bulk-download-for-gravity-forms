@@ -42,7 +42,13 @@ class BulkDownload {
 		}
 
 		$form_id   = (int) rgget( 'gf_form_id' );
-		$entry_ids = [ (int) rgget( 'gf_entry_id' ) ];
+		$entry_id  = absint( rgget( 'gf_entry_id' ) );
+
+		// Pass an empty array if entry id is not valid, to trigger the appropiate error message in bulk_download().
+		$entry_ids = array();
+		if ( $entry_id !== 0 ) {
+			$entry_ids[] = $entry_id;
+		}
 
 		$this->bulk_download( $form_id, $entry_ids );
 	}
