@@ -112,6 +112,10 @@ class BulkDownload {
 		// Get upload files.
 		$uploaded_files = $this->get_uploaded_files( $upload_fields, $entry_ids );
 
+		if ( count( $uploaded_files ) === 0 ) {
+			wp_die( esc_html__( 'No files found.', 'bulk-download-for-gravity-forms' ) );
+		}
+
 		try {
 			// Create a temp file, so even if the process dies, the file might eventually get deleted.
 			$zip_filename = wp_tempnam( $download_filename . '.zip' );
