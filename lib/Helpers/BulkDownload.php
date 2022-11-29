@@ -80,8 +80,21 @@ class BulkDownload {
 			wp_die( esc_html( __( 'The entry IDs to perform a bulk download for are missing.', 'bulk-download-for-gravity-forms' ) ) );
 		}
 
-		// Check permissions.
-		if ( ! GFCommon::current_user_can_any( 'gravityforms_view_entries' ) ) {
+		// Check permissions and if user is logged in.
+		$download_permitted = GFCommon::current_user_can_any( 'gravityforms_view_entries' );
+
+		/**
+		 * Filters the download permission.
+		 *
+		 * @param bool        $download_permitted  True if user is logged in and has gravityforms_view_entries permission.
+		 * @param int         $form_id             The GF form id.
+		 * @param array<int>  $entry_ids           The entry IDs of which all files will be added to the archive.
+		 *
+		 * @return bool
+		 */
+		$download_permitted = apply_filters('bdfgf_download_permission', $download_permitted, $form_id, $entry_ids );
+
+		if ( ! $download_permitted ) {
 			wp_die( esc_html( __( 'You don\'t have the permission to bulk download files for this entry', 'bulk-download-for-gravity-forms' ) ) );
 		}
 
