@@ -204,6 +204,10 @@ class BulkDownload {
 		foreach ( $entry_ids as $entry_id ) {
 			$entry = GFAPI::get_entry( $entry_id );
 
+			if ( is_wp_error( $entry ) ) {
+				continue;
+			}
+
 			$uploaded_files[ $entry_id ] = [];
 			foreach ( $upload_fields as $upload_field ) {
 				// If the field is a multi file upload, add all files from the JSON object to the array of uploaded files.
