@@ -95,7 +95,7 @@ class BulkDownload {
 		$download_permitted = apply_filters('bdfgf_download_permission', $download_permitted, $form_id, $entry_ids );
 
 		if ( ! $download_permitted ) {
-			wp_die( esc_html( __( 'You don\'t have the permission to bulk download files for this entry', 'bulk-download-for-gravity-forms' ) ) );
+			wp_die( esc_html( __( 'You don\'t have the permission to bulk download files for this entry.', 'bulk-download-for-gravity-forms' ) ) );
 		}
 
 		// Increase some PHP limits.
