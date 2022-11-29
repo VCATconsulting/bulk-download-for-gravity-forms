@@ -101,7 +101,16 @@ class BulkDownload {
 		// Increase some PHP limits.
 		add_filter( 'bdfgf_memory_limit', [ $this, 'set_memory_limit' ], 1 );
 		wp_raise_memory_limit( 'bdfgf' );
-		set_time_limit( apply_filters( 'bdfgf_max_execution_time', 120 ) );
+
+		/**
+		 * Filters the the max execution time.
+		 *
+		 * @param int $max_execution_time Max. execution time in seconds. Default: 120.
+		 *
+		 * @return int
+		 */
+		$max_execution_time = apply_filters( 'bdfgf_max_execution_time', 120 );
+		set_time_limit( $max_execution_time );
 
 		// Get the form object.
 		$form = GFAPI::get_form( $form_id );
