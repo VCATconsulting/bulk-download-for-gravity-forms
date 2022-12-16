@@ -80,15 +80,37 @@ class BulkDownload {
 			wp_die( esc_html( __( 'The entry IDs to perform a bulk download for are missing.', 'bulk-download-for-gravity-forms' ) ) );
 		}
 
-		// Check permissions.
-		if ( ! GFCommon::current_user_can_any( 'gravityforms_view_entries' ) ) {
-			wp_die( esc_html( __( 'You don\'t have the permission to bulk download files for this entry', 'bulk-download-for-gravity-forms' ) ) );
+		// Check permissions and if user is logged in.
+		$download_permitted = GFCommon::current_user_can_any( 'gravityforms_view_entries' );
+
+		/**
+		 * Filters the download permission.
+		 *
+		 * @param bool        $download_permitted  True if user is logged in and has gravityforms_view_entries permission.
+		 * @param int         $form_id             The GF form id.
+		 * @param array<int>  $entry_ids           The entry IDs of which all files will be added to the archive.
+		 *
+		 * @return bool
+		 */
+		$download_permitted = apply_filters('bdfgf_download_permission', $download_permitted, $form_id, $entry_ids );
+
+		if ( ! $download_permitted ) {
+			wp_die( esc_html( __( 'You don\'t have the permission to bulk download files for this entry.', 'bulk-download-for-gravity-forms' ) ) );
 		}
 
 		// Increase some PHP limits.
 		add_filter( 'bdfgf_memory_limit', [ $this, 'set_memory_limit' ], 1 );
 		wp_raise_memory_limit( 'bdfgf' );
-		set_time_limit( apply_filters( 'bdfgf_max_execution_time', 120 ) );
+
+		/**
+		 * Filters the the max execution time.
+		 *
+		 * @param int $max_execution_time Max. execution time in seconds. Default: 120.
+		 *
+		 * @return int
+		 */
+		$max_execution_time = apply_filters( 'bdfgf_max_execution_time', 120 );
+		set_time_limit( $max_execution_time );
 
 		// Get the form object.
 		$form = GFAPI::get_form( $form_id );
