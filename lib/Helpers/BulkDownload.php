@@ -45,7 +45,7 @@ class BulkDownload {
 		$entry_id = absint( rgget( 'gf_entry_id' ) );
 
 		// Pass an empty array if entry id is not valid, to trigger the appropiate error message in bulk_download().
-		$entry_ids = array();
+		$entry_ids = [];
 		if ( 0 !== $entry_id ) {
 			$entry_ids[] = $entry_id;
 		}
@@ -134,7 +134,7 @@ class BulkDownload {
 		// Get upload files.
 		$uploaded_files = $this->get_uploaded_files( $upload_fields, $entry_ids );
 
-		if ( count( $uploaded_files ) === 0 ) {
+		if ( 0 === count( $uploaded_files ) ) {
 			wp_die( esc_html__( 'No files found.', 'bulk-download-for-gravity-forms' ) );
 		}
 
