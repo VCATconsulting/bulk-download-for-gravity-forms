@@ -42,7 +42,13 @@ class BulkDownload {
 		}
 
 		$form_id   = (int) rgget( 'gf_form_id' );
-		$entry_ids = [ (int) rgget( 'gf_entry_id' ) ];
+		$entry_id  = absint( rgget( 'gf_entry_id' ) );
+
+		// Pass an empty array if entry id is not valid, to trigger the appropiate error message in bulk_download().
+		$entry_ids = array();
+		if ( $entry_id !== 0 ) {
+			$entry_ids[] = $entry_id;
+		}
 
 		$this->bulk_download( $form_id, $entry_ids );
 	}
@@ -115,6 +121,10 @@ class BulkDownload {
 		// Get the form object.
 		$form = GFAPI::get_form( $form_id );
 
+		if ( empty( $form ) ) {
+			wp_die( esc_html__( 'Form not found.', 'bulk-download-for-gravity-forms' ) );
+		}
+
 		// Create a nice filename for the download.
 		$download_filename = $this->get_download_filename( $form, $entry_ids );
 
@@ -123,6 +133,10 @@ class BulkDownload {
 
 		// Get upload files.
 		$uploaded_files = $this->get_uploaded_files( $upload_fields, $entry_ids );
+
+		if ( count( $uploaded_files ) === 0 ) {
+			wp_die( esc_html__( 'No files found.', 'bulk-download-for-gravity-forms' ) );
+		}
 
 		try {
 			// Create a temp file, so even if the process dies, the file might eventually get deleted.
@@ -211,6 +225,10 @@ class BulkDownload {
 		$uploaded_files = [];
 		foreach ( $entry_ids as $entry_id ) {
 			$entry = GFAPI::get_entry( $entry_id );
+
+			if ( is_wp_error( $entry ) ) {
+				continue;
+			}
 
 			$uploaded_files[ $entry_id ] = [];
 			foreach ( $upload_fields as $upload_field ) {
