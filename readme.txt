@@ -2,7 +2,7 @@
 
 Contributors: VCATconsulting, Kau-Boy, shogathu, nida78, naapwe
 Requires at least: 5.0
-Tested up to: 6.0
+Tested up to: 6.2
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
@@ -63,6 +63,17 @@ You can find example usage of the [memory_limit](https://gist.github.com/vcat-su
 By default only logged in users with the `gravityforms_view_entries` capability are allowed to download files in bulk. You can use the `bdfgf_download_permission` filter to expand permission check.
 
 == Changelog ==
+
+= 3.1.0 =
+
+* Adding 2 new setting fields for the form, which now can customize error messages.
+* Fixed errors that could be caused by an incorrectly send header for the zip archive. This sometimes meant that the zip file could not be opened
+* Adding filter for download permission to allow more fine grained permission management for other plugins.
+* General improvements
+* Fix error message not being triggered when entry id for single entry download is invalid.
+* Show error when form not found.
+* Do not create an invalid zip file when no files are found.
+* Skip entries which could not be retrieved.
 
 = 3.0.0 =
 

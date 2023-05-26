@@ -53,10 +53,40 @@ class DownloadMergeTag {
 	 * @return string
 	 */
 	public function replace_bulk_download_link( $text, $form, $entry, $url_encode, $esc_html, $nl2br, $format ) {
-		if ( ! FormFields::has_uploaded_files( $entry ) ) {
+		/*
+		 * Check if merge tag is part of the text, if not return the text
+		 */
+		if ( false === strpos( $text, '{bulk_download_link' ) ) {
 			return $text;
 		}
+
 		preg_match_all( '/\{bulk_download_link(:(.*?))?\}/', $text, $matches, PREG_SET_ORDER );
+
+		/*
+		 * Check if upload field/s exists, if not return default or custom text.
+		 */
+		if ( ! FormFields::has_upload_fields( $form['id'] ) ) {
+			$default_no_fields = esc_html__( 'These form has no upload field.', 'bulk-download-for-gravity-forms' );
+
+			if ( isset( $form['bulkDownloadSettings']['customNoDownloadFieldText'] ) && true === $form['bulkDownloadSettings']['customNoDownloadFieldText'] ) {
+				$default_no_fields = esc_html( $form['bulkDownloadSettings']['noDownloadFieldText'] );
+			}
+
+			return self::replace_merge_tags( $matches, $default_no_fields, $text );
+		}
+
+		/*
+		 * Check if uploaded files exists, if not return default or custom text.
+		 */
+		if ( ! FormFields::has_uploaded_files( $entry ) ) {
+			$default_no_files = esc_html__( 'no files uploaded', 'bulk-download-for-gravity-forms' );
+
+			if ( isset( $form['bulkDownloadSettings']['customNoDownloadText'] ) && true === $form['bulkDownloadSettings']['customNoDownloadText'] ) {
+				$default_no_files = esc_html( $form['bulkDownloadSettings']['noDownloadText'] );
+			}
+
+			return self::replace_merge_tags( $matches, $default_no_files, $text );
+		}
 
 		if ( is_array( $matches ) ) {
 			$default_link_text = esc_html__( 'Download all files for this entry', 'bulk-download-for-gravity-forms' );
@@ -101,5 +131,28 @@ class DownloadMergeTag {
 			),
 			esc_html( $link_text )
 		);
+	}
+
+	/**
+	 * Replace the given matches with the replace_text in the text.
+	 *
+	 * @param array  $matches The matches array.
+	 * @param string $replace_text The replace text.
+	 * @param string $text The text.
+	 *
+	 * @return string
+	 */
+	public function replace_merge_tags( $matches, $replace_text, $text ) {
+		if ( is_array( $matches ) ) {
+			foreach ( $matches as $match ) {
+				$text = str_replace(
+					$match[0],
+					$replace_text,
+					$text
+				);
+			}
+		}
+
+		return $text;
 	}
 }

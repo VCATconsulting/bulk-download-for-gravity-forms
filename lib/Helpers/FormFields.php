@@ -79,10 +79,17 @@ class FormFields {
 
 		$form_upload_fields = self::get_form_upload_fields( $entry['form_id'] );
 
+		$has_fields = false;
 		foreach ( $form_upload_fields as $form_upload_field ) {
 			if ( ! empty( $entry[ $form_upload_field ] ) ) {
-				return true;
+				if ( '[]' !== ( $entry[ $form_upload_field ] ) ) {
+					$has_fields = true;
+				}
 			}
+		}
+
+		if ( true === $has_fields ) {
+			return true;
 		}
 
 		return false;

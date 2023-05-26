@@ -109,6 +109,48 @@ class BulkDownloadFormSettingsPage {
 							],
 						],
 					],
+					[
+						'name'    => 'customNoDownloadText',
+						'type'    => 'toggle',
+						'label'   => esc_html__( 'Set a custom text if no files for download are exists ', 'bulk-download-for-gravity-forms' ),
+						'tooltip' => gform_tooltip( 'bulk_download_custom_no_download_text', null, true ),
+					],
+					[
+						'name'       => 'noDownloadText',
+						'type'       => 'text',
+						'class'      => '',
+						'label'      => esc_html__( 'The text when no files for download are available', 'bulk-download-for-gravity-forms' ),
+						'tooltip'    => gform_tooltip( 'bulk_download_no_download_text', null, true ),
+						'dependency' => [
+							'live'   => true,
+							'fields' => [
+								[
+									'field' => 'customNoDownloadText',
+								],
+							],
+						],
+					],
+					[
+						'name'    => 'customNoDownloadFieldText',
+						'type'    => 'toggle',
+						'label'   => esc_html__( 'Set a custom text if no download fields are exists ', 'bulk-download-for-gravity-forms' ),
+						'tooltip' => gform_tooltip( 'bulk_download_custom_no_download_field', null, true ),
+					],
+					[
+						'name'       => 'noDownloadFieldText',
+						'type'       => 'text',
+						'class'      => '',
+						'label'      => esc_html__( 'The text when no download fields are in the form', 'bulk-download-for-gravity-forms' ),
+						'tooltip'    => gform_tooltip( 'bulk_download_no_download_field', null, true ),
+						'dependency' => [
+							'live'   => true,
+							'fields' => [
+								[
+									'field' => 'customNoDownloadFieldText',
+								],
+							],
+						],
+					],
 				],
 			],
 		];
@@ -124,10 +166,14 @@ class BulkDownloadFormSettingsPage {
 		$form = self::get_form( rgget( 'form_id' ) );
 
 		// Save settings.
-		$form['bulkDownloadSettings']['customArchivename']   = (bool) rgar( $values, 'customArchivename' );
-		$form['bulkDownloadSettings']['downloadArchivename'] = rgar( $values, 'downloadArchivename' );
-		$form['bulkDownloadSettings']['customFoldername']    = (bool) rgar( $values, 'customFoldername' );
-		$form['bulkDownloadSettings']['downloadFoldername']  = rgar( $values, 'downloadFoldername' );
+		$form['bulkDownloadSettings']['customArchivename']         = (bool) rgar( $values, 'customArchivename' );
+		$form['bulkDownloadSettings']['downloadArchivename']       = rgar( $values, 'downloadArchivename' );
+		$form['bulkDownloadSettings']['customFoldername']          = (bool) rgar( $values, 'customFoldername' );
+		$form['bulkDownloadSettings']['downloadFoldername']        = rgar( $values, 'downloadFoldername' );
+		$form['bulkDownloadSettings']['customNoDownloadText']      = (bool) rgar( $values, 'customNoDownloadText' );
+		$form['bulkDownloadSettings']['noDownloadText']            = rgar( $values, 'noDownloadText' );
+		$form['bulkDownloadSettings']['customNoDownloadFieldText'] = (bool) rgar( $values, 'customNoDownloadFieldText' );
+		$form['bulkDownloadSettings']['noDownloadFieldText']       = rgar( $values, 'noDownloadFieldText' );
 
 		// Save form.
 		GFAPI::update_form( $form );
@@ -153,7 +199,7 @@ class BulkDownloadFormSettingsPage {
 				'fields'         => self::settings_fields( $form_id ),
 				'initial_values' => rgar( $form, 'bulkDownloadSettings' ),
 				'save_callback'  => [ self::class, 'process_form_settings' ],
-				'before_fields'  => function() use ( $form ) {
+				'before_fields'  => function () use ( $form ) {
 					return sprintf(
 						'<script type="text/javascript">var form = %s;</script>',
 						wp_json_encode( $form )

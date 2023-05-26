@@ -41,12 +41,12 @@ class BulkDownload {
 			return;
 		}
 
-		$form_id   = (int) rgget( 'gf_form_id' );
-		$entry_id  = absint( rgget( 'gf_entry_id' ) );
+		$form_id  = (int) rgget( 'gf_form_id' );
+		$entry_id = absint( rgget( 'gf_entry_id' ) );
 
 		// Pass an empty array if entry id is not valid, to trigger the appropiate error message in bulk_download().
 		$entry_ids = array();
-		if ( $entry_id !== 0 ) {
+		if ( 0 !== $entry_id ) {
 			$entry_ids[] = $entry_id;
 		}
 
@@ -98,7 +98,7 @@ class BulkDownload {
 		 *
 		 * @return bool
 		 */
-		$download_permitted = apply_filters('bdfgf_download_permission', $download_permitted, $form_id, $entry_ids );
+		$download_permitted = apply_filters( 'bdfgf_download_permission', $download_permitted, $form_id, $entry_ids );
 
 		if ( ! $download_permitted ) {
 			wp_die( esc_html( __( 'You don\'t have the permission to bulk download files for this entry.', 'bulk-download-for-gravity-forms' ) ) );
@@ -109,7 +109,7 @@ class BulkDownload {
 		wp_raise_memory_limit( 'bdfgf' );
 
 		/**
-		 * Filters the the max execution time.
+		 * Filters the max execution time.
 		 *
 		 * @param int $max_execution_time Max. execution time in seconds. Default: 120.
 		 *
@@ -154,9 +154,12 @@ class BulkDownload {
 			header( 'Pragma: public' );
 			header( 'Expires: 0' );
 			header( 'Cache-Control: must-revalidate, post-check=0, pre-check=0' );
-			header( 'Content-Type: application/octet-stream;' );
-			header( 'Content-Disposition: attachment; filename=' . $download_filename . '.zip;' );
+			header( 'Content-Type: application/octet-stream' );
+			header( 'Content-Disposition: attachment; filename="' . $download_filename . '.zip"' );
+			header( 'Content-Length: ' . filesize( $zip_filename ) );
+			flush();
 			readfile( $zip_filename ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_readfile
+			flush();
 			unlink( $zip_filename );
 		} catch ( \Exception $e ) {
 			// translators: %s: The error message.
