@@ -66,10 +66,10 @@ class DownloadMergeTag {
 		 * Check if upload field/s exists, if not return default or custom text.
 		 */
 		if ( ! FormFields::has_upload_fields( $form['id'] ) ) {
-			$default_no_fields = esc_html__( 'These form has no upload field.', 'bulk-download-for-gravity-forms' );
+			$default_no_fields = esc_html__( 'These form has no upload field', 'bulk-download-for-gravity-forms' );
 
-			if ( isset( $form['bulkDownloadSettings']['customNoDownloadFieldText'] ) && true === $form['bulkDownloadSettings']['customNoDownloadFieldText'] ) {
-				$default_no_fields = esc_html( $form['bulkDownloadSettings']['noDownloadFieldText'] );
+			if ( isset( $form['bulkDownloadSettings']['customNoUploadFieldText'] ) && true === $form['bulkDownloadSettings']['customNoUploadFieldText'] ) {
+				$default_no_fields = esc_html( $form['bulkDownloadSettings']['noUploadFieldText'] );
 			}
 
 			return self::replace_merge_tags( $matches, $default_no_fields, $text );
@@ -79,7 +79,7 @@ class DownloadMergeTag {
 		 * Check if uploaded files exists, if not return default or custom text.
 		 */
 		if ( ! FormFields::has_uploaded_files( $entry ) ) {
-			$default_no_files = esc_html__( 'no files uploaded', 'bulk-download-for-gravity-forms' );
+			$default_no_files = esc_html__( 'No files uploaded', 'bulk-download-for-gravity-forms' );
 
 			if ( isset( $form['bulkDownloadSettings']['customNoDownloadText'] ) && true === $form['bulkDownloadSettings']['customNoDownloadText'] ) {
 				$default_no_files = esc_html( $form['bulkDownloadSettings']['noDownloadText'] );

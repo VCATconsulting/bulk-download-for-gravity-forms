@@ -64,6 +64,10 @@ By default only logged in users with the `gravityforms_view_entries` capability 
 
 == Changelog ==
 
+= 3.1.1 =
+
+* Correct some wording
+
 = 3.1.0 =
 
 * Adding 2 new setting fields for the form, which now can customize error messages.
