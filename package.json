@@ -4,11 +4,15 @@
     "env:start": "wp-env start",
     "test:e2e": "wp-scripts test-e2e",
     "test:e2e:help": "wp-scripts test-e2e --help",
-    "test:e2e:debug": "wp-scripts --inspect-brk test-e2e --puppeteer-devtools"
+    "test:e2e:debug": "wp-scripts --inspect-brk test-e2e --puppeteer-devtools",
+    "test:e2e:playwright": "playwright test --config tests/e2e/playwright.config.js",
+    "test:e2e:playwright:debug": "playwright test --debug --config tests/e2e/playwright.config.js",
+    "test:e2e:playwright:ui": "playwright test --ui --config tests/e2e/playwright.config.js"
   },
   "devDependencies": {
     "@wordpress/e2e-test-utils": "^7.3.0",
+    "@wordpress/e2e-test-utils-playwright": "^0.6.0",
     "@wordpress/env": "^4.6.0",
-    "@wordpress/scripts": "^22.5.0"
+    "@wordpress/scripts": "^26.9.0"
   }
 }

@@ -4,3 +4,6 @@
 /artifacts/
 /node_modules/
 /vendor/
+/test-results/
+/playwright-report/
+/playwright/.cache/
