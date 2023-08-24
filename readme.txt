@@ -2,7 +2,7 @@
 
 Contributors: VCATconsulting, Kau-Boy, shogathu, nida78, naapwe
 Requires at least: 5.0
-Tested up to: 6.2
+Tested up to: 6.3
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
