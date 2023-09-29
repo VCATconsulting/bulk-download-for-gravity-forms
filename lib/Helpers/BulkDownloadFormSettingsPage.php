@@ -162,23 +162,31 @@ class BulkDownloadFormSettingsPage {
 	 * @param array $values Submitted settings values.
 	 */
 	public static function process_form_settings( $values ) {
-		// Get form object.
+		/*
+		 * Get form object.
+		 */
 		$form = self::get_form( rgget( 'form_id' ) );
 
-		// Save settings.
-		$form['bulkDownloadSettings']['customArchivename']         = (bool) rgar( $values, 'customArchivename' );
-		$form['bulkDownloadSettings']['downloadArchivename']       = rgar( $values, 'downloadArchivename' );
-		$form['bulkDownloadSettings']['customFoldername']          = (bool) rgar( $values, 'customFoldername' );
-		$form['bulkDownloadSettings']['downloadFoldername']        = rgar( $values, 'downloadFoldername' );
-		$form['bulkDownloadSettings']['customNoDownloadText']      = (bool) rgar( $values, 'customNoDownloadText' );
-		$form['bulkDownloadSettings']['noDownloadText']            = rgar( $values, 'noDownloadText' );
+		/*
+		 * Save settings.
+		 */
+		$form['bulkDownloadSettings']['customArchivename']       = (bool) rgar( $values, 'customArchivename' );
+		$form['bulkDownloadSettings']['downloadArchivename']     = rgar( $values, 'downloadArchivename' );
+		$form['bulkDownloadSettings']['customFoldername']        = (bool) rgar( $values, 'customFoldername' );
+		$form['bulkDownloadSettings']['downloadFoldername']      = rgar( $values, 'downloadFoldername' );
+		$form['bulkDownloadSettings']['customNoDownloadText']    = (bool) rgar( $values, 'customNoDownloadText' );
+		$form['bulkDownloadSettings']['noDownloadText']          = rgar( $values, 'noDownloadText' );
 		$form['bulkDownloadSettings']['customNoUploadFieldText'] = (bool) rgar( $values, 'customNoUploadFieldText' );
 		$form['bulkDownloadSettings']['noUploadFieldText']       = rgar( $values, 'noUploadFieldText' );
 
-		// Save form.
+		/*
+		 * Save form.
+		 */
 		GFAPI::update_form( $form );
 
-		// Update cached form object.
+		/*
+		 * Update cached form object.
+		 */
 		self::$_form = $form;
 	}
 
@@ -186,7 +194,9 @@ class BulkDownloadFormSettingsPage {
 	 * Initializes the Settings renderer at the beginning of page load.
 	 */
 	public static function initialize_settings_renderer() {
-		// Get form object.
+		/*
+		 * Get form object.
+		 */
 		$form_id = absint( rgget( 'id' ) );
 		$form    = self::get_form( $form_id );
 
@@ -210,7 +220,9 @@ class BulkDownloadFormSettingsPage {
 
 		self::set_settings_renderer( $renderer );
 
-		// Process save callback.
+		/*
+		 * Process save callback.
+		 */
 		if ( self::get_settings_renderer()->is_save_postback() ) {
 			self::get_settings_renderer()->process_postback();
 		}
@@ -233,7 +245,9 @@ class BulkDownloadFormSettingsPage {
 	 * @return bool|WP_Error
 	 */
 	private static function set_settings_renderer( $renderer ) {
-		// Ensure renderer is an instance of Settings.
+		/*
+		 * Ensure renderer is an instance of Settings.
+		 */
 		if ( ! is_a( $renderer, 'Gravity_Forms\Gravity_Forms\Settings\Settings' ) ) {
 			return new WP_Error( 'Renderer must be an instance of Gravity_Forms\Gravity_Forms\Settings\Settings.' );
 		}

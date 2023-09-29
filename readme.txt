@@ -3,7 +3,7 @@
 Contributors: VCATconsulting, Kau-Boy, shogathu, nida78, naapwe
 Requires at least: 5.0
 Tested up to: 6.3
-Requires PHP: 5.6
+Requires PHP: 7.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -62,7 +62,18 @@ You can find example usage of the [memory_limit](https://gist.github.com/vcat-su
 
 By default only logged in users with the `gravityforms_view_entries` capability are allowed to download files in bulk. You can use the `bdfgf_download_permission` filter to expand permission check.
 
+= Can I add extra files on the server which were not uploaded to the zip archive?
+
+The Plugin provides a filter `bdfgf_single_entry_uploaded_files` and an action `bdfgf_after_uploaded_files` to do this. You can add extra files to every single entry or to the whole zip archive beside the entries
+
 == Changelog ==
+
+= 3.2.0 =
+
+* Adding an extra filter `bdfgf_single_entry_uploaded_files` to include extra files to a single or every subfolder inside the zip archive.
+* Adding an extra action `bdfgf_after_uploaded_files` to add one or more files into the zip archive after the folder passthrough the merge tags.
+* Update some filter to the gf_apply_filter function.
+* Update to min PHP Version 7.4
 
 = 3.1.1 =
 
@@ -71,7 +82,7 @@ By default only logged in users with the `gravityforms_view_entries` capability 
 = 3.1.0 =
 
 * Adding 2 new setting fields for the form, which now can customize error messages.
-* Fixed errors that could be caused by an incorrectly send header for the zip archive. This sometimes meant that the zip file could not be opened
+* Fixed errors that could be caused by an incorrectly send header for the zip archive. This sometimes meant that the zip file could not be opened.
 * Adding filter for download permission to allow more fine grained permission management for other plugins.
 * General improvements
 * Fix error message not being triggered when entry id for single entry download is invalid.

@@ -33,6 +33,9 @@ class FormFields {
 			return self::$forms[ $form_id ]['upload_fields'];
 		}
 
+		/*
+		 * Get the form.
+		 */
 		$form = GFAPI::get_form( $form_id );
 
 		if ( ! $form ) {
@@ -40,7 +43,10 @@ class FormFields {
 		}
 
 		self::$forms[ $form_id ]['upload_fields'] = [];
-		// Find all single or multi file upload fields.
+
+		/*
+		 * Find all single or multi file upload fields.
+		 */
 		foreach ( $form['fields'] as $field ) {
 			if ( 'fileupload' === $field['type'] ) {
 				self::$forms[ $form_id ]['upload_fields'][] = $field['id'];
@@ -77,6 +83,9 @@ class FormFields {
 			return false;
 		}
 
+		/*
+		 * Get all upload fields for the form.
+		 */
 		$form_upload_fields = self::get_form_upload_fields( $entry['form_id'] );
 
 		$has_fields = false;

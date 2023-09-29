@@ -44,7 +44,9 @@ class BulkDownload {
 		$form_id  = (int) rgget( 'gf_form_id' );
 		$entry_id = absint( rgget( 'gf_entry_id' ) );
 
-		// Pass an empty array if entry id is not valid, to trigger the appropiate error message in bulk_download().
+		/*
+		 * Pass an empty array if entry id is not valid, to trigger the appropiate error message in bulk_download().
+		 */
 		$entry_ids = [];
 		if ( 0 !== $entry_id ) {
 			$entry_ids[] = $entry_id;
@@ -86,25 +88,32 @@ class BulkDownload {
 			wp_die( esc_html( __( 'The entry IDs to perform a bulk download for are missing.', 'bulk-download-for-gravity-forms' ) ) );
 		}
 
-		// Check permissions and if user is logged in.
+		/*
+		 * Check permissions and if user is logged in.
+		 */
 		$download_permitted = GFCommon::current_user_can_any( 'gravityforms_view_entries' );
 
 		/**
 		 * Filters the download permission.
 		 *
 		 * @param bool        $download_permitted  True if user is logged in and has gravityforms_view_entries permission.
-		 * @param int         $form_id             The GF form id.
+		 * @param int         $form_id The GF form id.
 		 * @param array<int>  $entry_ids           The entry IDs of which all files will be added to the archive.
 		 *
 		 * @return bool
 		 */
-		$download_permitted = apply_filters( 'bdfgf_download_permission', $download_permitted, $form_id, $entry_ids );
+		$download_permitted = gf_apply_filters( [ 'bdfgf_download_permission', $form_id ], $download_permitted, $form_id, $entry_ids );
 
+		/*
+		 * Check if userer has no permission.
+		 */
 		if ( ! $download_permitted ) {
 			wp_die( esc_html( __( 'You don\'t have the permission to bulk download files for this entry.', 'bulk-download-for-gravity-forms' ) ) );
 		}
 
-		// Increase some PHP limits.
+		/*
+		 * Add filter to Increase some PHP limits.
+		 */
 		add_filter( 'bdfgf_memory_limit', [ $this, 'set_memory_limit' ], 1 );
 		wp_raise_memory_limit( 'bdfgf' );
 
@@ -118,38 +127,64 @@ class BulkDownload {
 		$max_execution_time = apply_filters( 'bdfgf_max_execution_time', 120 );
 		set_time_limit( $max_execution_time );
 
-		// Get the form object.
+		/*
+		 * Get the form object.
+		 */
 		$form = GFAPI::get_form( $form_id );
 
 		if ( empty( $form ) ) {
 			wp_die( esc_html__( 'Form not found.', 'bulk-download-for-gravity-forms' ) );
 		}
 
-		// Create a nice filename for the download.
+		/*
+		 * Create a nice filename for the download.
+		 */
 		$download_filename = $this->get_download_filename( $form, $entry_ids );
 
-		// Get the upload fields.
+		/*
+		 * Get the upload fields.
+		 */
 		$upload_fields = FormFields::get_form_upload_fields( $form_id );
 
-		// Get upload files.
-		$uploaded_files = $this->get_uploaded_files( $upload_fields, $entry_ids );
+		/*
+		 * Get upload files.
+		 */
+		$uploaded_files = $this->get_uploaded_files( $upload_fields, $entry_ids, $form );
 
 		if ( 0 === count( $uploaded_files ) ) {
 			wp_die( esc_html__( 'No files found.', 'bulk-download-for-gravity-forms' ) );
 		}
 
 		try {
-			// Create a temp file, so even if the process dies, the file might eventually get deleted.
+			/*
+			 * Create a temp file, so even if the process dies, the file might eventually get deleted.
+			 */
 			$zip_filename = wp_tempnam( $download_filename . '.zip' );
-			// Create the ZipArchive.
+
+			/*
+			 * Create the ZipArchive.
+			 */
 			$zip = new ZipArchive();
 			$zip->open( $zip_filename, ZipArchive::CREATE );
 
 			$this->zip_uploaded_files( $uploaded_files, $zip, $form );
 
+			/**
+			 * Do extra action.
+			 *
+			 * @param ZipArchive $zip The zip archive.
+			 * @param array      $uploaded_files All uploaded files .
+			 * @param array      $form The current upload directory's path and URL.
+			 *
+			 * @return ZipArchive
+			 */
+			gf_do_action( [ 'bdfgf_after_uploaded_files', $form['id'] ], $zip, $uploaded_files, $form );
+
 			$zip->close();
 
-			// Send ZIP file.
+			/*
+			 * Send ZIP file.
+			 */
 			ob_clean();
 			header( 'Pragma: public' );
 			header( 'Expires: 0' );
@@ -171,13 +206,15 @@ class BulkDownload {
 	/**
 	 * Create download filename.
 	 *
-	 * @param object $form      The form object.
+	 * @param object $form The form object.
 	 * @param array  $entry_ids Array of entry IDs.
 	 *
 	 * @return string
 	 */
 	public function get_download_filename( $form, $entry_ids ) {
-		// Try to overwrite the filename with the title of the form.
+		/*
+		 * Try to overwrite the filename with the title of the form.
+		 */
 		$form_title = sanitize_title( $form['title'] );
 		if ( empty( $form_title ) ) {
 			$form_title = _x( 'filename', 'default filename', 'bulk-download-for-gravity-forms' );
@@ -191,14 +228,23 @@ class BulkDownload {
 			$suffix
 		);
 
-		// Check if the form has a custom filename definded in the settings.
+		/*
+		 * Check if the form has a custom filename definded in the settings.
+		 */
 		if ( isset( $form['bulkDownloadSettings']['customArchivename'] ) && true === $form['bulkDownloadSettings']['customArchivename'] ) {
-			// Get the first entry.
+			/*
+			 * Get the first entry.
+			 */
 			$first_entry = isset( $entry_ids[0] ) ? GFAPI::get_entry( $entry_ids[0] ) : null;
-			// Replace all merge tags.
+
+			/*
+			 * Replace all merge tags.
+			 */
 			$new_archive_name = GFCommon::replace_variables( $form['bulkDownloadSettings']['downloadArchivename'], $form, $first_entry );
 
-			// The new archive name could be parsed and does not contain any merge tags, overwrite the filename.
+			/*
+			 * The new archive name could be parsed and does not contain any merge tags, overwrite the filename.
+			 */
 			if ( ! empty( $new_archive_name ) && false === strpos( $new_archive_name, '{' ) ) {
 				$filename = $new_archive_name;
 			}
@@ -207,8 +253,8 @@ class BulkDownload {
 		/**
 		 * Filters the file name of the zip archive (without extension).
 		 *
-		 * @param string $filename  The current zip archive file name.
-		 * @param array  $form      The GF form array.
+		 * @param string $filename The current zip archive file name.
+		 * @param array  $form The GF form array.
 		 * @param array  $entry_ids The entry IDs of all files being added to the archive.
 		 *
 		 * @return string
@@ -221,11 +267,13 @@ class BulkDownload {
 	 *
 	 * @param array $upload_fields Array of all uploaded_fields.
 	 * @param array $entry_ids     Array of entry IDs.
+	 * @param array $form          The GF form array.
 	 *
 	 * @return array
 	 */
-	public function get_uploaded_files( $upload_fields, $entry_ids ) {
+	public function get_uploaded_files( $upload_fields, $entry_ids, $form ) {
 		$uploaded_files = [];
+
 		foreach ( $entry_ids as $entry_id ) {
 			$entry = GFAPI::get_entry( $entry_id );
 
@@ -235,7 +283,9 @@ class BulkDownload {
 
 			$uploaded_files[ $entry_id ] = [];
 			foreach ( $upload_fields as $upload_field ) {
-				// If the field is a multi file upload, add all files from the JSON object to the array of uploaded files.
+				/*
+				 * If the field is a multi file upload, add all files from the JSON object to the array of uploaded files.
+				 */
 				$field_files = json_decode( $entry[ $upload_field ] );
 				if ( is_null( $field_files ) ) {
 					$field_files = [ $entry[ $upload_field ] ];
@@ -246,14 +296,31 @@ class BulkDownload {
 				}
 			}
 
+			/*
+			 * The current upload directory.
+			 */
 			$wp_upload_dir = wp_upload_dir();
-			// Replace the URL path with the file system path for all files.
+
+			/*
+			 * Replace the URL path with the file system path for all files.
+			 */
 			if ( ! empty( $uploaded_files[ $entry_id ] ) ) {
 				foreach ( $uploaded_files[ $entry_id ] as $key => $uploaded_file ) {
 					if ( ! empty( $uploaded_file ) ) {
 						$uploaded_files[ $entry_id ][ $key ] = str_replace( $wp_upload_dir['baseurl'], $wp_upload_dir['basedir'], $uploaded_file );
 					}
 				}
+
+				/**
+				 * Filter to add extra files into a single entry.
+				 *
+				 * @param array $uploaded_files All uploaded files.
+				 * @param int   $entry_id The entry ID .
+				 * @param array $form The form array.
+				 *
+				 * @return array
+				 */
+				$uploaded_files = gf_apply_filters( [ 'bdfgf_single_entry_uploaded_files', $form['id'] ], $uploaded_files, $entry_id, $form );
 			} else {
 				unset( $uploaded_files[ $entry_id ] );
 			}
@@ -275,17 +342,28 @@ class BulkDownload {
 		foreach ( $uploaded_files as $entry_id => $entry_files ) {
 			foreach ( $entry_files as $uploaded_file ) {
 				if ( is_readable( $uploaded_file ) ) {
-					// Define a default entry file name using the entry ID as the folder name.
+					/*
+					 * Define a default entry file name using the entry ID as the folder name.
+					 */
 					$entry_filename = $entry_id . '/' . basename( $uploaded_file );
 
-					// Check if the form has a custom filename definded in the settings.
+					/*
+					 * Check if the form has a custom filename definded in the settings.
+					 */
 					if ( isset( $form['bulkDownloadSettings']['customFoldername'] ) && true === $form['bulkDownloadSettings']['customFoldername'] ) {
-						// Get the entry.
+						/*
+						 * Get the entry.
+						 */
 						$entry = GFAPI::get_entry( $entry_id );
-						// Replace all merge tags.
+
+						/*
+						 * Replace all merge tags.
+						 */
 						$new_folder_name = GFCommon::replace_variables( $form['bulkDownloadSettings']['downloadFoldername'], $form, $entry );
 
-						// The new archive name could be parsed and does not contain any merge tags, overwrite the filename.
+						/*
+						 * The new archive name could be parsed and does not contain any merge tags, overwrite the filename.
+						 */
 						if ( ! empty( $new_folder_name ) && false === strpos( $new_folder_name, '{' ) ) {
 							$entry_filename = $new_folder_name . '/' . basename( $uploaded_file );
 						}
