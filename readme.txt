@@ -64,7 +64,7 @@ By default only logged in users with the `gravityforms_view_entries` capability 
 
 = Can I add extra files on the server which were not uploaded to the zip archive?
 
-The Plugin provides a filter `bdfgf_single_entry_uploaded_files` and an action `bdfgf_after_uploaded_files` to do this. You can add extra files to every single entry or to the whole zip archive beside the entries
+The Plugin provides a filter `bdfgf_single_entry_uploaded_files` and an action `bdfgf_after_uploaded_files` to do this. You can add extra files to every single entry or to the whole zip archive beside the entries.
 
 You can find example usage of the [bdfgf_single_entry_uploaded_files](https://gist.github.com/vcat-support/600ffe67054d34a546bcfa155bf978e0) filter and the [bdfgf_after_uploaded_files](https://gist.github.com/vcat-support/5b5005b28c8961562998bca28d201535) action in the two linked GISTs.
 
@@ -72,8 +72,8 @@ You can find example usage of the [bdfgf_single_entry_uploaded_files](https://gi
 
 = 3.2.0 =
 
-* Adding an extra filter `bdfgf_single_entry_uploaded_files` to include extra files to a single or every subfolder inside the zip archive.
-* Adding an extra action `bdfgf_after_uploaded_files` to add one or more files into the zip archive after the folder passthrough the merge tags.
+* Adding a filter `bdfgf_single_entry_uploaded_files` to include extra files to a single or every subfolder inside the zip archive.
+* Adding an action `bdfgf_after_uploaded_files` to add one or more files into the zip archive after the folder passthrough the merge tags.
 * Update some filter to the gf_apply_filter function.
 * Update to min PHP Version 7.4
 
