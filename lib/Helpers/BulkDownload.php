@@ -175,8 +175,6 @@ class BulkDownload {
 			 * @param ZipArchive $zip The zip archive.
 			 * @param array      $uploaded_files All uploaded files .
 			 * @param array      $form The current upload directory's path and URL.
-			 *
-			 * @return ZipArchive
 			 */
 			gf_do_action( [ 'bdfgf_after_uploaded_files', $form['id'] ], $zip, $uploaded_files, $form );
 
