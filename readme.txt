@@ -62,7 +62,7 @@ You can find example usage of the [memory_limit](https://gist.github.com/vcat-su
 
 By default only logged in users with the `gravityforms_view_entries` capability are allowed to download files in bulk. You can use the `bdfgf_download_permission` filter to expand permission check.
 
-= Can I add extra files on the server which were not uploaded to the zip archive?
+= Can I add additional files to the zip archive?
 
 The Plugin provides a filter `bdfgf_single_entry_uploaded_files` and an action `bdfgf_after_uploaded_files` to do this. You can add extra files to every single entry or to the whole zip archive beside the entries.
 
