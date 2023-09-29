@@ -66,7 +66,7 @@ By default only logged in users with the `gravityforms_view_entries` capability 
 
 The Plugin provides a filter `bdfgf_single_entry_uploaded_files` and an action `bdfgf_after_uploaded_files` to do this. You can add extra files to every single entry or to the whole zip archive beside the entries
 
-You can find example usage of the [bdfgf_single_entry_uploaded_files](https://gist.github.com/vcat-support/600ffe67054d34a546bcfa155bf978e0) filter and the [bdfgf_after_uploaded_files](https://gist.github.com/vcat-support/5b5005b28c8961562998bca28d201535) filter in the two linked GISTs.
+You can find example usage of the [bdfgf_single_entry_uploaded_files](https://gist.github.com/vcat-support/600ffe67054d34a546bcfa155bf978e0) filter and the [bdfgf_after_uploaded_files](https://gist.github.com/vcat-support/5b5005b28c8961562998bca28d201535) action in the two linked GISTs.
 
 == Changelog ==
 
