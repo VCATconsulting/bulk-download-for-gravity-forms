@@ -25,6 +25,8 @@ class FilterBulkAction {
 	/**
 	 * Add bulk download to bulk actions.
 	 *
+	 * @phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
+	 *
 	 * @param array $actions The actions array.
 	 * @param int   $form_id The form ID.
 	 *

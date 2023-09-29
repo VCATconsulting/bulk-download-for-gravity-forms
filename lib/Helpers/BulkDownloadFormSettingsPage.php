@@ -44,6 +44,8 @@ class BulkDownloadFormSettingsPage {
 	/**
 	 * Renders the form settings.
 	 *
+	 * @phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.Found
+	 *
 	 * @param int $form_id The form ID.
 	 */
 	public static function form_settings( $form_id ) {
@@ -56,6 +58,8 @@ class BulkDownloadFormSettingsPage {
 
 	/**
 	 * Get Personal Data settings fields.
+	 *
+	 * @phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.Found
 	 *
 	 * @param int $form_id The current Form ID.
 	 *

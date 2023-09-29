@@ -23,6 +23,8 @@ class DownloadMergeTag {
 	/**
 	 * Create the merge tag.
 	 *
+	 * @phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
+	 *
 	 * @param string $merge_tags The merge tag.
 	 * @param int    $form_id The form ID.
 	 * @param array  $fields The fields array.
@@ -41,6 +43,8 @@ class DownloadMergeTag {
 
 	/**
 	 * Create the merge tag.
+	 *
+	 * @phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 	 *
 	 * @param string $text The text in which merge tags are being processed.
 	 * @param array  $form The Form object if available or false.

@@ -24,6 +24,8 @@ class RowActions {
 	/**
 	 * Add bulk download row action link to GF entries list table.
 	 *
+	 * @phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
+	 *
 	 * @param int    $form_id      The form ID.
 	 * @param int    $field_id     The field ID.
 	 * @param string $value        The field value.

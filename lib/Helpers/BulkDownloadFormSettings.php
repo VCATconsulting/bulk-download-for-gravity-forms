@@ -26,6 +26,8 @@ class BulkDownloadFormSettings {
 	/**
 	 * Add an entry to the form settings menu.
 	 *
+	 * @phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
+	 *
 	 * @param array $setting_tabs The settings tabs.
 	 * @param int   $form_id      The ID of the form being accessed.
 	 */
@@ -41,6 +43,8 @@ class BulkDownloadFormSettings {
 
 	/**
 	 * Render the settings page.
+	 *
+	 * @phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.Found
 	 *
 	 * @param string $subview Used to complete the action name, allowing an additional subview to be detected.
 	 */

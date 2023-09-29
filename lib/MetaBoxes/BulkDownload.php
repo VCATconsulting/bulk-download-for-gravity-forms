@@ -25,6 +25,8 @@ class BulkDownload {
 	/**
 	 * Add the bulk download button meta box.
 	 *
+	 * @phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
+	 *
 	 * @param array $meta_boxes The properties for the meta boxes.
 	 * @param array $entry      The entry currently being viewed/edited.
 	 * @param array $form       The form object used to process the current entry.
@@ -49,6 +51,8 @@ class BulkDownload {
 
 	/**
 	 * Render the meta box.
+	 *
+	 * @phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 	 *
 	 * @param array $args    An array with the form array and the entry array.
 	 * @param array $metabox The metabox data array.
