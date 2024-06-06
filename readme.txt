@@ -70,6 +70,10 @@ You can find example usage of the [bdfgf_single_entry_uploaded_files](https://gi
 
 == Changelog ==
 
+= 3.2.1 =
+
+* Adding `Requires Plugins` to plugin header for WP 6.5 and above
+
 = 3.2.0 =
 
 * Adding a filter `bdfgf_single_entry_uploaded_files` to include extra files to a single or every subfolder inside the zip archive.

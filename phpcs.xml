@@ -61,6 +61,7 @@
 		<!-- Uncomment if you want to use some functions that should be replaced with the VIP cached alternatives -->
 		<!--<exclude name="WordPress.VIP.RestrictedFunctions" />-->
 		<!--<exclude name="WordPress.VIP.PostsPerPage" />-->
+		<exclude name="Generic.Arrays.DisallowShortArraySyntax.Found" />
 	</rule>
 	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
 		<properties>
