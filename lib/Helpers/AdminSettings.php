@@ -40,5 +40,7 @@ class AdminSettings {
 		if ( 'gf_edit_forms' === rgget( 'page' ) && 'settings' === rgget( 'view' ) && 'bulk_download' === rgget( 'subview' ) ) {
 			return 'bulk_download_edit';
 		}
+
+		return '';
 	}
 }
