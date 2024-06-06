@@ -4,7 +4,7 @@ Contributors: VCATconsulting, Kau-Boy, shogathu, nida78
 Requires at least: 5.0
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable Tag: 3.2.2
+Stable Tag: 3.2.3
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -70,6 +70,10 @@ The Plugin provides a filter `bdfgf_single_entry_uploaded_files` and an action `
 You can find example usage of the [bdfgf_single_entry_uploaded_files](https://gist.github.com/vcat-support/600ffe67054d34a546bcfa155bf978e0) filter and the [bdfgf_after_uploaded_files](https://gist.github.com/vcat-support/5b5005b28c8961562998bca28d201535) action in the two linked GISTs.
 
 == Changelog ==
+
+= 3.2.3 =
+
+* Fix Github actions
 
 = 3.2.2 =
 
