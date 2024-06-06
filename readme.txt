@@ -1,6 +1,6 @@
 === Bulk Download for Gravity Forms ===
 
-Contributors: VCATconsulting, Kau-Boy, shogathu, nida78, naapwe
+Contributors: VCATconsulting, Kau-Boy, shogathu, nida78
 Requires at least: 5.0
 Tested up to: 6.5
 Requires PHP: 7.4
