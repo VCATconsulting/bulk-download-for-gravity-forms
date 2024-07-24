@@ -2,7 +2,7 @@
 
 Contributors: VCATconsulting, Kau-Boy, shogathu, nida78
 Requires at least: 5.0
-Tested up to: 6.6.1
+Tested up to: 6.6
 Requires PHP: 7.4
 Stable Tag: 3.2.4
 License: GPLv3
