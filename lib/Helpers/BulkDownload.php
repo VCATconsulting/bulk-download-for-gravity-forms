@@ -78,6 +78,8 @@ class BulkDownload {
 	 *
 	 * @param int   $form_id   The current form ID.
 	 * @param array $entry_ids Array of entry IDs.
+	 *
+	 * @throws \Exception If ZIP creation fails.
 	 */
 	public function bulk_download( $form_id, $entry_ids ) {
 		if ( empty( $form_id ) ) {
@@ -164,8 +166,21 @@ class BulkDownload {
 			/*
 			 * Create the ZipArchive.
 			 */
-			$zip = new ZipArchive();
-			$zip->open( $zip_filename, ZipArchive::CREATE );
+			$zip         = new ZipArchive();
+			$open_result = $zip->open( $zip_filename, ZipArchive::OVERWRITE );
+
+			/*
+			 * Check if the zip archive could be created.
+			 */
+			if ( true !== $open_result ) {
+				throw new \Exception(
+					sprintf(
+					// translators: %s: The error code.
+						esc_html__( 'Failed to create ZIP archive. Error code:  %s', 'bulk-download-for-gravity-forms' ),
+						esc_html( $open_result )
+					)
+				);
+			}
 
 			$this->zip_uploaded_files( $uploaded_files, $zip, $form );
 
