@@ -5,8 +5,9 @@
  * @package BDFGF\Helpers
  */
 
-namespace BDFGF\Helpers;
+namespace BDFGF\Actions;
 
+use BDFGF\Helpers\FormFields;
 use GFAPI;
 use GFCommon;
 use ZipArchive;
@@ -58,7 +59,7 @@ class BulkDownload {
 	/**
 	 * Handle bulk action file download from multiple entries.
 	 *
-	 * @param string $action  Action being performed.
+	 * @param string $action Action being performed.
 	 * @param array  $entries The entry IDs the action is being applied to.
 	 * @param int    $form_id The current form ID.
 	 */
@@ -83,11 +84,11 @@ class BulkDownload {
 	 */
 	public function bulk_download( $form_id, $entry_ids ) {
 		if ( empty( $form_id ) ) {
-			wp_die( esc_html( __( 'The form ID to perform a bulk download for is missing.', 'bulk-download-for-gravity-forms' ) ) );
+			wp_die( esc_html( __( 'The form ID required for bulk download is missing.', 'bulk-download-for-gravity-forms' ) ) );
 		}
 
 		if ( empty( $entry_ids ) ) {
-			wp_die( esc_html( __( 'The entry IDs to perform a bulk download for are missing.', 'bulk-download-for-gravity-forms' ) ) );
+			wp_die( esc_html( __( 'The entry IDs required for bulk download are missing.', 'bulk-download-for-gravity-forms' ) ) );
 		}
 
 		/*
@@ -110,7 +111,7 @@ class BulkDownload {
 		 * Check if userer has no permission.
 		 */
 		if ( ! $download_permitted ) {
-			wp_die( esc_html( __( 'You don\'t have the permission to bulk download files for this entry.', 'bulk-download-for-gravity-forms' ) ) );
+			wp_die( esc_html( __( 'You do not have permission to bulk download files for these entries.', 'bulk-download-for-gravity-forms' ) ) );
 		}
 
 		/*
@@ -154,7 +155,7 @@ class BulkDownload {
 		$uploaded_files = $this->get_uploaded_files( $upload_fields, $entry_ids, $form );
 
 		if ( 0 === count( $uploaded_files ) ) {
-			wp_die( esc_html__( 'No files found.', 'bulk-download-for-gravity-forms' ) );
+			wp_die( esc_html__( 'No files found for the selected entries.', 'bulk-download-for-gravity-forms' ) );
 		}
 
 		try {
@@ -176,7 +177,7 @@ class BulkDownload {
 				throw new \Exception(
 					sprintf(
 					// translators: %s: The error code.
-						esc_html__( 'Failed to create ZIP archive. Error code:  %s', 'bulk-download-for-gravity-forms' ),
+						esc_html__( 'Failed to create ZIP archive. Error code: %s', 'bulk-download-for-gravity-forms' ),
 						esc_html( $open_result )
 					)
 				);
@@ -206,9 +207,9 @@ class BulkDownload {
 			header( 'Content-Disposition: attachment; filename="' . $download_filename . '.zip"' );
 			header( 'Content-Length: ' . filesize( $zip_filename ) );
 			flush();
-			readfile( $zip_filename ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_readfile
+			readfile( $zip_filename ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_readfile
 			flush();
-			unlink( $zip_filename );
+			unlink( $zip_filename ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
 		} catch ( \Exception $e ) {
 			// translators: %s: The error message.
 			wp_die( esc_html( sprintf( __( 'There was an error creating the ZIP file: %s', 'bulk-download-for-gravity-forms' ), $e->getMessage() ) ) );
@@ -230,7 +231,7 @@ class BulkDownload {
 		 */
 		$form_title = sanitize_title( $form['title'] );
 		if ( empty( $form_title ) ) {
-			$form_title = _x( 'filename', 'default filename', 'bulk-download-for-gravity-forms' );
+			$form_title = _x( 'archive', 'default filename', 'bulk-download-for-gravity-forms' );
 		}
 
 		$suffix = 1 === count( $entry_ids ) ? $entry_ids[0] : $form['id'];
@@ -287,6 +288,11 @@ class BulkDownload {
 	public function get_uploaded_files( $upload_fields, $entry_ids, $form ) {
 		$uploaded_files = [];
 
+		/*
+		 * The current upload directory.
+		 */
+		$wp_upload_dir = wp_upload_dir();
+
 		foreach ( $entry_ids as $entry_id ) {
 			$entry = GFAPI::get_entry( $entry_id );
 
@@ -294,48 +300,53 @@ class BulkDownload {
 				continue;
 			}
 
+			$deleted_urls = gform_get_meta( (int) $entry_id, 'bdfgf_deleted_file_urls' );
+			$deleted_urls = maybe_unserialize( $deleted_urls );
+			$deleted_urls = is_array( $deleted_urls ) ? $deleted_urls : [];
+			$deleted_urls = array_values( array_filter( $deleted_urls, 'is_string' ) );
+			$deleted_set  = array_fill_keys( $deleted_urls, true );
+
 			$uploaded_files[ $entry_id ] = [];
-			foreach ( $upload_fields as $upload_field ) {
-				/*
-				 * If the field is a multi file upload, add all files from the JSON object to the array of uploaded files.
-				 */
-				$field_files = json_decode( $entry[ $upload_field ] );
-				if ( is_null( $field_files ) ) {
-					$field_files = [ $entry[ $upload_field ] ];
+			foreach ( (array) $upload_fields as $upload_field_id ) {
+				$raw = (string) rgar( $entry, (string) $upload_field_id );
+				if ( '' === $raw ) {
+					continue;
 				}
 
-				if ( ! empty( $field_files ) ) {
-					$uploaded_files[ $entry_id ] = array_merge( $uploaded_files[ $entry_id ], $field_files );
+				$decoded = json_decode( $raw, true );
+				$urls    = is_array( $decoded ) ? $decoded : [ $raw ];
+
+				foreach ( (array) $urls as $url ) {
+					if ( ! is_string( $url ) || '' === trim( $url ) ) {
+						continue;
+					}
+
+					// ✅ Wenn für dieses Entry als gelöscht markiert: NICHT ins ZIP
+					if ( isset( $deleted_set[ $url ] ) ) {
+						continue;
+					}
+
+					$path = str_replace( $wp_upload_dir['baseurl'], $wp_upload_dir['basedir'], $url );
+
+					if ( is_readable( $path ) ) {
+						$uploaded_files[ (int) $entry_id ][] = $path;
+					}
 				}
 			}
 
-			/*
-			 * The current upload directory.
+			/**
+			 * Filter to add extra files into a single entry.
+			 *
+			 * @param array $uploaded_files All uploaded files.
+			 * @param int   $entry_id The entry ID .
+			 * @param array $form The form array.
+			 *
+			 * @return array
 			 */
-			$wp_upload_dir = wp_upload_dir();
+			$uploaded_files = gf_apply_filters( [ 'bdfgf_single_entry_uploaded_files', $form['id'] ], $uploaded_files, $entry_id, $form );
 
-			/*
-			 * Replace the URL path with the file system path for all files.
-			 */
-			if ( ! empty( $uploaded_files[ $entry_id ] ) ) {
-				foreach ( $uploaded_files[ $entry_id ] as $key => $uploaded_file ) {
-					if ( ! empty( $uploaded_file ) ) {
-						$uploaded_files[ $entry_id ][ $key ] = str_replace( $wp_upload_dir['baseurl'], $wp_upload_dir['basedir'], $uploaded_file );
-					}
-				}
-
-				/**
-				 * Filter to add extra files into a single entry.
-				 *
-				 * @param array $uploaded_files All uploaded files.
-				 * @param int   $entry_id The entry ID .
-				 * @param array $form The form array.
-				 *
-				 * @return array
-				 */
-				$uploaded_files = gf_apply_filters( [ 'bdfgf_single_entry_uploaded_files', $form['id'] ], $uploaded_files, $entry_id, $form );
-			} else {
-				unset( $uploaded_files[ $entry_id ] );
+			if ( empty( $uploaded_files[ (int) $entry_id ] ) ) {
+				unset( $uploaded_files[ (int) $entry_id ] );
 			}
 		}
 

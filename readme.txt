@@ -4,7 +4,7 @@ Contributors: VCATconsulting, Kau-Boy, shogathu, nida78
 Requires at least: 5.0
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 3.2.5
+Stable tag: 4.0.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -17,6 +17,11 @@ It offers the opportunity to download all files from one or multiple Gravity For
 
 Therefore, it adds a download link to the list view, and an extra download button to the single view of a Gravity Form entry and a Bulk Action.
 All uploaded files are collected and downloadable in a single ZIP file.
+
+New:
+The plugin now also allows bulk deletion of all files from one or multiple entries.
+This includes a new bulk action and row action. The files are permanently deleted from the server.
+Deleted files are excluded from the ZIP archive and are marked in the entry details view using either the default text or your custom text..
 
 == Installation ==
 
@@ -32,6 +37,11 @@ All uploaded files are collected and downloadable in a single ZIP file.
 3. An extra button is added by the plugin at the right sidebar in the detail view of an entry
 4. A download link can be added to notifications using a merge tag
 5. The form specific settings page to overwrite file and folder names
+6. The new settings for bulk deleting entry files
+7. The new bulk action to delete all files from multiple entries in the list view
+8. The Row action to delete all files from an entry in the entry details view
+9. The deleted files are marked in the entries list view with custom text
+10. The notice in the entry details view showing who performed the bulk delete action and when and showing the deleted files with custom text
 
 == Frequently Asked Questions ==
 
@@ -70,6 +80,17 @@ The Plugin provides a filter `bdfgf_single_entry_uploaded_files` and an action `
 You can find example usage of the [bdfgf_single_entry_uploaded_files](https://gist.github.com/vcat-support/600ffe67054d34a546bcfa155bf978e0) filter and the [bdfgf_after_uploaded_files](https://gist.github.com/vcat-support/5b5005b28c8961562998bca28d201535) action in the two linked GISTs.
 
 == Changelog ==
+
+= 4.0.0 =
+
+* Implement new settings for bulk deleting entry files, including a new bulk action and row action
+* Add a filter to display deleted files in the entry details view and entries list view with custom text
+* Add a notice in the entry details view showing who performed the bulk delete action and when
+* Add validation before performing the bulk delete action to prevent accidental file deletion
+* Add a check for the bulk delete action when no files are found for an entry
+* Add a check for the bulk download action when no files are found for an entry
+* Update some texts and labels
+* General improvements
 
 = 3.2.5 =
 

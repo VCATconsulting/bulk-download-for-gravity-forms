@@ -1,0 +1,64 @@
+{
+	"extends": [
+		"plugin:@wordpress/eslint-plugin/recommended"
+	],
+	"ignorePatterns": [
+		"build/",
+		"vendor/",
+		"node_modules/",
+		"tests/"
+	],
+	"env": {
+		"browser": true
+	},
+	"rules": {
+		"max-len": [
+			"error",
+			{
+				"code": 200,
+				"ignoreComments": true,
+				"ignoreUrls": true
+			}
+		],
+		"prettier/prettier": 0,
+		"import/no-unresolved": [
+			"error",
+			{
+				"ignore": [
+					"^@wordpress/"
+				]
+			}
+		],
+		"no-alert": "off"
+	},
+	"overrides": [
+		{
+			"files": [
+				"icon.js",
+				"example.js"
+			],
+			"rules": {
+				"max-len": [
+					"error",
+					{
+						"code": 100000
+					}
+				]
+			}
+		}
+	],
+	"settings": {
+		"import/core-modules": [
+			"@wordpress/api",
+			"@wordpress/block-editor",
+			"@wordpress/components",
+			"@wordpress/compose",
+			"@wordpress/data",
+			"@wordpress/editor",
+			"@wordpress/edit-post",
+			"@wordpress/element",
+			"@wordpress/i18n",
+			"@wordpress/primitives"
+		]
+	}
+}

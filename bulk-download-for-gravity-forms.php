@@ -9,8 +9,8 @@
  * @wordpress-plugin
  * Plugin Name: Bulk Download for Gravity Forms
  * Plugin URI: https://github.com/VCATconsulting/bulk-download-for-gravity-forms
- * Description: Bulk download all files from one or multiple Gravity Forms entries in one go.
- * Version: 3.2.5
+ * Description: Bulk download all files from one or multiple Gravity Forms entries in one go and give the option to delete file from an entry or all files from multiple entries after download.
+ * Version: 4.0.0
  * Author: VCAT Consulting GmbH
  * Author URI: https://www.vcat.de
  * Text Domain: bulk-download-for-gravity-forms
@@ -18,7 +18,7 @@
  * License URI: http://www.gnu.org/licenses/gpl-3.0.txt
  */
 
-define( 'BDFGF_VERSION', '3.2.5' );
+define( 'BDFGF_VERSION', '4.0.0' );
 define( 'BDFGF_FILE', __FILE__ );
 define( 'BDFGF_PATH', plugin_dir_path( BDFGF_FILE ) );
 define( 'BDFGF_URL', plugin_dir_url( BDFGF_FILE ) );

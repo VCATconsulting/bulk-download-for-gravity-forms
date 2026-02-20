@@ -3,7 +3,6 @@ import { visitAdminPage } from '@wordpress/e2e-test-utils';
 
 // Name of the test suite.
 describe( 'Find download buttons', () => {
-
 	// Flow being tested.
 	// Ideally each flow is independent and can be run separately.
 	it( 'Should load properly', async () => {
@@ -22,9 +21,12 @@ describe( 'Find download buttons', () => {
 		expect( bulkDownloadAction.length ).not.toEqual( 0 );
 
 		// Find download button on single entry.
-		const firstEntryLink = await page.$eval( '.entry_row .row-actions .edit a', ( el ) => el.href );
+		const firstEntryLink = await page.$eval(
+			'.entry_row .row-actions .edit a',
+			( el ) => el.href
+		);
 		if ( firstEntryLink ) {
-			const firstEntryParams = firstEntryLink.split('?')[1];
+			const firstEntryParams = firstEntryLink.split( '?' )[ 1 ];
 			await visitAdminPage( '/admin.php', firstEntryParams );
 
 			const singleEntryBulkDownloadLink = await page.$x(
