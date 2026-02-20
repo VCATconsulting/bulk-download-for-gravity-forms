@@ -1,6 +1,6 @@
 {
   "name": "bdfgf/bulk-download-for-gravity-forms",
-  "description": "Bulk download all files from one or multiple Gravity Forms entries in one go.",
+  "description": "Bulk download all files from one or multiple Gravity Forms entries in one go and give the option to delete file from an entry or all files from multiple entries after download.",
   "require": {
     "php": ">=7.4",
     "ext-zip": "*"

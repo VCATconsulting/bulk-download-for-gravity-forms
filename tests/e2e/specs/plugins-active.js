@@ -3,7 +3,6 @@ import { visitAdminPage } from '@wordpress/e2e-test-utils';
 
 // Name of the test suite.
 describe( 'Plugins activated', () => {
-
 	// Flow being tested.
 	// Ideally each flow is independent and can be run separately.
 	it( 'Should load properly', async () => {

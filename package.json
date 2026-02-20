@@ -1,14 +1,42 @@
 {
   "name": "@bdfgf/bulk-download-for-gravity-forms",
+  "version": "1.0.0",
+  "description": "Bulk download all files from one or multiple Gravity Forms entries in one go and give the option to delete file from an entry or all files from multiple entries after download.",
+  "author": "Team WordPress - VCAT Consulting GmbH",
+  "license": "GPL-3.0-or-later",
+  "main": "build/index.js",
   "scripts": {
     "env:start": "wp-env start",
     "test:e2e": "wp-scripts test-e2e",
     "test:e2e:help": "wp-scripts test-e2e --help",
-    "test:e2e:debug": "wp-scripts --inspect-brk test-e2e --puppeteer-devtools"
+    "test:e2e:debug": "wp-scripts --inspect-brk test-e2e --puppeteer-devtools",
+    "build": "wp-scripts build",
+    "check-engines": "wp-scripts check-engines",
+    "check-licenses": "wp-scripts check-licenses",
+    "format:js": "wp-scripts format-js",
+    "format:js:src": "wp-scripts format-js ./src",
+    "lint:css": "wp-scripts lint-style",
+    "lint:css:src": "wp-scripts lint-style 'src/**/*.css'",
+    "lint:css:fix": "wp-scripts lint-style --fix",
+    "lint:js": "wp-scripts lint-js",
+    "lint:js:src": "wp-scripts lint-js ./src",
+    "lint:js:fix": "wp-scripts lint-js --fix",
+    "lint:md:docs": "wp-scripts lint-md-docs",
+    "lint:md:js": "wp-scripts lint-md-js",
+    "lint:pkg-json": "wp-scripts lint-pkg-json",
+    "lint": "npm run lint:js && npm run lint:css",
+    "lint:fix": "npm run lint:js:fix && npm run lint:css:fix",
+    "make-pot": "wp i18n make-pot . languages/colorful-fields-for-gravity-forms.pot --exclude=vendor,node_modules,src",
+    "make-json": "wp i18n make-json languages/ --no-purge",
+    "packages-update": "wp-scripts packages-update",
+    "postpackages-update": "npm run build",
+    "start": "wp-scripts start",
+    "test:unit": "wp-scripts test-unit-js"
   },
   "devDependencies": {
     "@wordpress/e2e-test-utils": "^7.3.0",
     "@wordpress/env": "^4.6.0",
-    "@wordpress/scripts": "^22.5.0"
+    "@wordpress/eslint-plugin": "^19.2.0",
+    "@wordpress/scripts": "^31.4.0"
   }
 }

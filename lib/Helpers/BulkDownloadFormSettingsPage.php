@@ -81,8 +81,7 @@ class BulkDownloadFormSettingsPage {
 						'name'       => 'downloadArchivename',
 						'type'       => 'text',
 						'class'      => 'merge-tag-support mt-position-right mt-hide_all_fields',
-						'label'      => esc_html__( 'The name for the downloaded archive', 'bulk-download-for-gravity-forms' ),
-						'tooltip'    => gform_tooltip( 'bulk_download_download_archivename', null, true ),
+						'label'      => esc_html__( 'The name of the downloaded archive', 'bulk-download-for-gravity-forms' ),
 						'dependency' => [
 							'live'   => true,
 							'fields' => [
@@ -95,15 +94,14 @@ class BulkDownloadFormSettingsPage {
 					[
 						'name'    => 'customFoldername',
 						'type'    => 'toggle',
-						'label'   => esc_html__( 'Set a custom (static) filename for the files inside the archive', 'bulk-download-for-gravity-forms' ),
-						'tooltip' => gform_tooltip( 'bulk_download_custom_folderame', null, true ),
+						'label'   => esc_html__( 'Set a custom (static) folder name for the files inside the archive', 'bulk-download-for-gravity-forms' ),
+						'tooltip' => gform_tooltip( 'bulk_download_download_foldername', null, true ),
 					],
 					[
 						'name'       => 'downloadFoldername',
 						'type'       => 'text',
 						'class'      => 'merge-tag-support mt-position-right mt-hide_all_fields',
-						'label'      => esc_html__( 'The name for the foldername inside the downloaded archive', 'bulk-download-for-gravity-forms' ),
-						'tooltip'    => gform_tooltip( 'bulk_download_download_foldername', null, true ),
+						'label'      => esc_html__( 'The name of the folder inside the downloaded archive', 'bulk-download-for-gravity-forms' ),
 						'dependency' => [
 							'live'   => true,
 							'fields' => [
@@ -123,8 +121,7 @@ class BulkDownloadFormSettingsPage {
 						'name'       => 'noDownloadText',
 						'type'       => 'text',
 						'class'      => '',
-						'label'      => esc_html__( 'The text when no files for download are available', 'bulk-download-for-gravity-forms' ),
-						'tooltip'    => gform_tooltip( 'bulk_download_no_download_text', null, true ),
+						'label'      => esc_html__( 'The text displayed when no files are available for download', 'bulk-download-for-gravity-forms' ),
 						'dependency' => [
 							'live'   => true,
 							'fields' => [
@@ -145,12 +142,31 @@ class BulkDownloadFormSettingsPage {
 						'type'       => 'text',
 						'class'      => '',
 						'label'      => esc_html__( 'The text when no upload fields are in the form', 'bulk-download-for-gravity-forms' ),
-						'tooltip'    => gform_tooltip( 'bulk_download_no_upload_field', null, true ),
 						'dependency' => [
 							'live'   => true,
 							'fields' => [
 								[
 									'field' => 'customNoUploadFieldText',
+								],
+							],
+						],
+					],
+					[
+						'name'    => 'customDeleteEntryFiles',
+						'type'    => 'toggle',
+						'label'   => esc_html__( 'Allow to delete entry files', 'bulk-download-for-gravity-forms' ),
+						'tooltip' => gform_tooltip( 'bulk_download_delete_entry_files', null, true ),
+					],
+					[
+						'name'       => 'customDeleteEntryFilesMarkerText',
+						'type'       => 'text',
+						'class'      => '',
+						'label'      => esc_html__( 'You can set a custom text that is displayed for deleted files. Default is (Deleted via bulk delete)', 'bulk-download-for-gravity-forms' ),
+						'dependency' => [
+							'live'   => true,
+							'fields' => [
+								[
+									'field' => 'customDeleteEntryFiles',
 								],
 							],
 						],
@@ -174,14 +190,16 @@ class BulkDownloadFormSettingsPage {
 		/*
 		 * Save settings.
 		 */
-		$form['bulkDownloadSettings']['customArchivename']       = (bool) rgar( $values, 'customArchivename' );
-		$form['bulkDownloadSettings']['downloadArchivename']     = rgar( $values, 'downloadArchivename' );
-		$form['bulkDownloadSettings']['customFoldername']        = (bool) rgar( $values, 'customFoldername' );
-		$form['bulkDownloadSettings']['downloadFoldername']      = rgar( $values, 'downloadFoldername' );
-		$form['bulkDownloadSettings']['customNoDownloadText']    = (bool) rgar( $values, 'customNoDownloadText' );
-		$form['bulkDownloadSettings']['noDownloadText']          = rgar( $values, 'noDownloadText' );
-		$form['bulkDownloadSettings']['customNoUploadFieldText'] = (bool) rgar( $values, 'customNoUploadFieldText' );
-		$form['bulkDownloadSettings']['noUploadFieldText']       = rgar( $values, 'noUploadFieldText' );
+		$form['bulkDownloadSettings']['customArchivename']                = (bool) rgar( $values, 'customArchivename' );
+		$form['bulkDownloadSettings']['downloadArchivename']              = rgar( $values, 'downloadArchivename' );
+		$form['bulkDownloadSettings']['customFoldername']                 = (bool) rgar( $values, 'customFoldername' );
+		$form['bulkDownloadSettings']['downloadFoldername']               = rgar( $values, 'downloadFoldername' );
+		$form['bulkDownloadSettings']['customNoDownloadText']             = (bool) rgar( $values, 'customNoDownloadText' );
+		$form['bulkDownloadSettings']['noDownloadText']                   = rgar( $values, 'noDownloadText' );
+		$form['bulkDownloadSettings']['customNoUploadFieldText']          = (bool) rgar( $values, 'customNoUploadFieldText' );
+		$form['bulkDownloadSettings']['noUploadFieldText']                = rgar( $values, 'noUploadFieldText' );
+		$form['bulkDownloadSettings']['customDeleteEntryFiles']           = (bool) rgar( $values, 'customDeleteEntryFiles' );
+		$form['bulkDownloadSettings']['customDeleteEntryFilesMarkerText'] = rgar( $values, 'customDeleteEntryFilesMarkerText' );
 
 		/*
 		 * Save form.

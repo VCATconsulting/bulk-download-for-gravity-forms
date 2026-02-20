@@ -70,7 +70,7 @@ class DownloadMergeTag {
 		 * Check if upload field/s exists, if not return default or custom text.
 		 */
 		if ( ! FormFields::has_upload_fields( $form['id'] ) ) {
-			$default_no_fields = esc_html__( 'These form has no upload field', 'bulk-download-for-gravity-forms' );
+			$default_no_fields = esc_html__( 'This form has no upload fields.', 'bulk-download-for-gravity-forms' );
 
 			if ( isset( $form['bulkDownloadSettings']['customNoUploadFieldText'] ) && true === $form['bulkDownloadSettings']['customNoUploadFieldText'] ) {
 				$default_no_fields = esc_html( $form['bulkDownloadSettings']['noUploadFieldText'] );

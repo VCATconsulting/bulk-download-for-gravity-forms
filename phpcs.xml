@@ -18,7 +18,7 @@
 	<arg name="basepath" value="./"/>
 
 	<!-- Check up to 8 files simultanously. -->
-	<arg name="parallel" value="8"/>
+	<arg name="parallel" value="20"/>
 
 	<!-- Only check the PHP. CSS/SCSS/JS files are checked separately with linters. -->
 	<arg name="extensions" value="php"/>
@@ -35,11 +35,15 @@
 	#############################################################################
 	-->
 
-	<exclude-pattern>/build/</exclude-pattern>
-	<!-- Exclude tests folder for now -->
-	<exclude-pattern>/tests/</exclude-pattern>
-	<exclude-pattern>/vendor/</exclude-pattern>
-	<exclude-pattern>/node_modules/</exclude-pattern>
+	<!-- Exclude external / generated resources -->
+	<exclude-pattern>*/build/*</exclude-pattern>
+	<exclude-pattern>*/node_modules/*</exclude-pattern>
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<exclude-pattern>*/tests/*</exclude-pattern>
+
+	<!-- Exclude minified assets -->
+	<exclude-pattern>*.min.js</exclude-pattern>
+	<exclude-pattern>*.min.css</exclude-pattern>
 
 	<!--
 	#############################################################################
@@ -53,6 +57,7 @@
 
 	<rule ref="WordPress">
 		<!-- As we use PHP 5.4+ now, we can use the short array syntax -->
+		<exclude name="Generic.Arrays.DisallowShortArraySyntax.Found" />
 		<exclude name="Universal.Arrays.DisallowShortArraySyntax.Found" />
 		<!-- Uncomment if you develop a theme with templates for CPTs having a prefix -->
 		<exclude name="WordPress.Files.FileName" />
@@ -65,14 +70,18 @@
 	</rule>
 	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
 		<properties>
-			<!-- Value: replace the function, class, and variable prefixes used. Separate multiple prefixes with a comma. -->
-			<property name="prefixes" type="array" value="bdfgf, bulk_download_for_gravity_forms"/>
+			<property name="prefixes" type="array">
+				<element value="bdfgf"/>
+				<element value="bulk_download_for_gravity_forms"/>
+			</property>
 		</properties>
 	</rule>
 	<rule ref="WordPress.WP.I18n">
 		<properties>
-			<!-- Value: replace the text domain used. Separate multiple prefixes with a comma. -->
-			<property name="text_domain" type="array" value="bulk-download-for-gravity-forms"/>
+			<property name="text_domain" type="array">
+				<!-- Value: replace the text domain used. Separate multiple prefixes with a comma. -->
+				<element value="bulk-download-for-gravity-forms"/>
+			</property>
 		</properties>
 	</rule>
 	<rule ref="WordPress.WhiteSpace.ControlStructureSpacing">
@@ -89,7 +98,7 @@
 	-->
 
 	<!-- https://github.com/PHPCompatibility/PHPCompatibility#sniffing-your-code-for-compatibility-with-specific-php-versions -->
-	<config name="testVersion" value="5.6-"/>
+	<config name="testVersion" value="7.4-"/>
 	<!-- https://github.com/PHPCompatibility/PHPCompatibilityWP -->
 	<rule ref="PHPCompatibilityWP"/>
 

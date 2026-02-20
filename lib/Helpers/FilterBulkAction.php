@@ -33,11 +33,27 @@ class FilterBulkAction {
 	 * @retun array
 	 */
 	public function add_bulk_download_dropdown( $actions, $form_id ) {
-		if ( ! GFCommon::current_user_can_any( 'gravityforms_view_entries' ) ) {
+		/*
+		 * Hide on trash view.
+		 */
+		$view = rgget( 'filter' ) ? rgget( 'filter' ) : rgget( 'status' );
+		if ( in_array( $view, [ 'trash', 'spam' ], true ) ) {
 			return $actions;
 		}
 
+		if ( ! GFCommon::current_user_can_any( 'gravityforms_view_entries' ) ) {
+			return $actions;
+		}
+		$form = \GFAPI::get_form( $form_id );
+
 		$actions['gf_bulk_download'] = esc_html__( 'Bulk Download', 'bulk-download-for-gravity-forms' );
+
+		if ( isset( $form['bulkDownloadSettings']['customDeleteEntryFiles'] ) && true === $form['bulkDownloadSettings']['customDeleteEntryFiles'] ) {
+			if ( ! GFCommon::current_user_can_any( 'gravityforms_delete_entries' ) ) {
+				return $actions;
+			}
+			$actions['bdfgf_bulk_delete'] = esc_html__( 'Bulk Delete Entry Files', 'bulk-download-for-gravity-forms' );
+		}
 
 		return $actions;
 	}
