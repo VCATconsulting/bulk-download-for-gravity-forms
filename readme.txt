@@ -84,7 +84,7 @@ You can find example usage of the [bdfgf_single_entry_uploaded_files](https://gi
 = 4.0.0 =
 
 * Implement new settings for bulk deleting entry files, including a new bulk action and row action
-* Add a filter to display deleted files in the entry details view and entries list view with custom text
+* Display deleted files in the entry details view and entries list view with custom text
 * Add a notice in the entry details view showing who performed the bulk delete action and when
 * Add validation before performing the bulk delete action to prevent accidental file deletion
 * Add a check for the bulk delete action when no files are found for an entry
