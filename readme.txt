@@ -81,7 +81,7 @@ You can find example usage of the [bdfgf_single_entry_uploaded_files](https://gi
 
 == Changelog ==
 
-= 4.0.1 =
+= 4.1.0 =
 * Harden upload URL to file path resolution to ensure files are resolved only inside the WordPress uploads directory.
 * Validate that selected entries belong to the requested form before download, delete, and AJAX validation.
 * Improve AJAX request sanitization for bulk action validation.
