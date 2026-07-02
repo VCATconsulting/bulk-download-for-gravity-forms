@@ -21,7 +21,7 @@ class BulkDownloadFormSettings {
 		/* Tell Gravity Forms to add our form PDF settings pages */
 		add_action( 'gform_form_settings_menu', [ $this, 'form_settings_menu' ], 10, 2 );
 		add_action( 'gform_form_settings_page_bulk_download', [ $this, 'settings_page' ], 10, 1 );
-		add_action( 'gform_tooltips', [ $this, 'bdfgf_add_tooltips' ], 10, 2 );
+		add_filter( 'gform_tooltips', [ $this, 'bdfgf_add_tooltips' ], 10, 1 );
 	}
 
 	/**

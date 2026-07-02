@@ -45,6 +45,8 @@ class BulkDownload {
 		$form_id  = (int) rgget( 'gf_form_id' );
 		$entry_id = absint( rgget( 'gf_entry_id' ) );
 
+		check_admin_referer( 'bdfgf_bulk_download_entry_' . $entry_id );
+
 		/*
 		 * Pass an empty array if entry id is not valid, to trigger the appropiate error message in bulk_download().
 		 */
@@ -158,6 +160,9 @@ class BulkDownload {
 			wp_die( esc_html__( 'No files found for the selected entries.', 'bulk-download-for-gravity-forms' ) );
 		}
 
+		$zip_filename = '';
+		$error        = null;
+
 		try {
 			/*
 			 * Create a temp file, so even if the process dies, the file might eventually get deleted.
@@ -199,7 +204,14 @@ class BulkDownload {
 			/*
 			 * Send ZIP file.
 			 */
-			ob_clean();
+			if ( ob_get_level() ) {
+				ob_clean();
+			}
+
+			if ( headers_sent() ) {
+				throw new \Exception( __( 'Headers already sent.', 'bulk-download-for-gravity-forms' ) );
+			}
+
 			header( 'Pragma: public' );
 			header( 'Expires: 0' );
 			header( 'Cache-Control: must-revalidate, post-check=0, pre-check=0' );
@@ -209,11 +221,19 @@ class BulkDownload {
 			flush();
 			readfile( $zip_filename ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_readfile
 			flush();
-			unlink( $zip_filename ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
 		} catch ( \Exception $e ) {
-			// translators: %s: The error message.
-			wp_die( esc_html( sprintf( __( 'There was an error creating the ZIP file: %s', 'bulk-download-for-gravity-forms' ), $e->getMessage() ) ) );
+			$error = $e;
+		} finally {
+			if ( $zip_filename && file_exists( $zip_filename ) ) {
+				unlink( $zip_filename ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
+			}
 		}
+
+		if ( $error ) {
+			// translators: %s: The error message.
+			wp_die( esc_html( sprintf( __( 'There was an error creating the ZIP file: %s', 'bulk-download-for-gravity-forms' ), $error->getMessage() ) ) );
+		}
+
 		die();
 	}
 
@@ -260,7 +280,11 @@ class BulkDownload {
 			 * The new archive name could be parsed and does not contain any merge tags, overwrite the filename.
 			 */
 			if ( ! empty( $new_archive_name ) && false === strpos( $new_archive_name, '{' ) ) {
-				$filename = $new_archive_name;
+				$new_archive_name = $this->sanitize_zip_archive_filename( $new_archive_name, '' );
+
+				if ( '' !== $new_archive_name ) {
+					$filename = $new_archive_name;
+				}
 			}
 		}
 
@@ -273,7 +297,9 @@ class BulkDownload {
 		 *
 		 * @return string
 		 */
-		return gf_apply_filters( [ 'bdfgf_download_filename', $form['id'] ], $filename, $form, $entry_ids );
+		$filtered_filename = gf_apply_filters( [ 'bdfgf_download_filename', $form['id'] ], $filename, $form, $entry_ids );
+
+		return $this->sanitize_zip_archive_filename( $filtered_filename, $filename );
 	}
 
 	/**
@@ -288,15 +314,10 @@ class BulkDownload {
 	public function get_uploaded_files( $upload_fields, $entry_ids, $form ) {
 		$uploaded_files = [];
 
-		/*
-		 * The current upload directory.
-		 */
-		$wp_upload_dir = wp_upload_dir();
-
 		foreach ( $entry_ids as $entry_id ) {
 			$entry = GFAPI::get_entry( $entry_id );
 
-			if ( is_wp_error( $entry ) ) {
+			if ( is_wp_error( $entry ) || (int) rgar( $entry, 'form_id' ) !== (int) $form['id'] ) {
 				continue;
 			}
 
@@ -326,9 +347,9 @@ class BulkDownload {
 						continue;
 					}
 
-					$path = str_replace( $wp_upload_dir['baseurl'], $wp_upload_dir['basedir'], $url );
+					$path = FormFields::get_upload_path_from_url( $url );
 
-					if ( is_readable( $path ) ) {
+					if ( $path && is_readable( $path ) ) {
 						$uploaded_files[ (int) $entry_id ][] = $path;
 					}
 				}
@@ -369,7 +390,8 @@ class BulkDownload {
 					/*
 					 * Define a default entry file name using the entry ID as the folder name.
 					 */
-					$entry_filename = $entry_id . '/' . basename( $uploaded_file );
+					$file_basename  = sanitize_file_name( wp_basename( $uploaded_file ) );
+					$entry_filename = $entry_id . '/' . $file_basename;
 
 					/*
 					 * Check if the form has a custom filename definded in the settings.
@@ -389,7 +411,11 @@ class BulkDownload {
 						 * The new archive name could be parsed and does not contain any merge tags, overwrite the filename.
 						 */
 						if ( ! empty( $new_folder_name ) && false === strpos( $new_folder_name, '{' ) ) {
-							$entry_filename = $new_folder_name . '/' . basename( $uploaded_file );
+							$new_folder_name = sanitize_file_name( wp_basename( $new_folder_name ) );
+
+							if ( '' !== $new_folder_name ) {
+								$entry_filename = $new_folder_name . '/' . $file_basename;
+							}
 						}
 					}
 
@@ -403,11 +429,51 @@ class BulkDownload {
 					 * @return string
 					 */
 					$entry_filename = gf_apply_filters( [ 'bdfgf_entry_filename', $form['id'] ], $entry_filename, $entry_id, $uploaded_file );
+					$entry_filename = $this->sanitize_zip_entry_filename( $entry_filename, $entry_id . '/' . $file_basename );
 					$zip->addFile( $uploaded_file, $entry_filename );
 				}
 			}
 		}
 
 		return $zip;
+	}
+
+	/**
+	 * Sanitize zip archive filename.
+	 *
+	 * @param string $filename File name.
+	 * @param string $fallback Fallback file name.
+	 *
+	 * @return string
+	 */
+	private function sanitize_zip_archive_filename( $filename, $fallback ) {
+		$filename = sanitize_file_name( wp_basename( (string) $filename ) );
+
+		return '' !== $filename ? $filename : $fallback;
+	}
+
+	/**
+	 * Sanitize file path inside zip archive.
+	 *
+	 * @param string $entry_filename Entry file name.
+	 * @param string $fallback       Fallback entry file name.
+	 *
+	 * @return string
+	 */
+	private function sanitize_zip_entry_filename( $entry_filename, $fallback ) {
+		$parts           = explode( '/', str_replace( '\\', '/', (string) $entry_filename ) );
+		$sanitized_parts = [];
+
+		foreach ( $parts as $part ) {
+			$part = sanitize_file_name( wp_basename( $part ) );
+
+			if ( '' === $part || '.' === $part || '..' === $part ) {
+				continue;
+			}
+
+			$sanitized_parts[] = $part;
+		}
+
+		return ! empty( $sanitized_parts ) ? implode( '/', $sanitized_parts ) : $fallback;
 	}
 }

@@ -60,14 +60,17 @@ class BulkDownload {
 	public function render_meta_box( $args, $metabox ) {
 		$entry = $args['entry'];
 
-		$link = add_query_arg(
-			[
-				'page'        => 'gf_entries',
-				'action'      => 'gf_bulk_download',
-				'gf_entry_id' => esc_attr( $entry['id'] ),
-				'gf_form_id'  => esc_attr( $entry['form_id'] ),
-			],
-			admin_url( 'admin.php' )
+		$link = wp_nonce_url(
+			add_query_arg(
+				[
+					'page'        => 'gf_entries',
+					'action'      => 'gf_bulk_download',
+					'gf_entry_id' => (int) $entry['id'],
+					'gf_form_id'  => (int) $entry['form_id'],
+				],
+				admin_url( 'admin.php' )
+			),
+			'bdfgf_bulk_download_entry_' . (int) $entry['id']
 		);
 
 		printf(

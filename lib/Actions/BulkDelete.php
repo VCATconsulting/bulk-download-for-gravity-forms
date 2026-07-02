@@ -134,7 +134,7 @@ class BulkDelete {
 		/*
 		 * Get upload files.
 		 */
-		$uploaded_files = $this->get_uploaded_files_to_delete( $upload_fields, $entry_ids );
+		$uploaded_files = $this->get_uploaded_files_to_delete( $upload_fields, $entry_ids, $form_id );
 
 		if ( 0 === count( $uploaded_files ) ) {
 			wp_die( esc_html__( 'No files found.', 'bulk-download-for-gravity-forms' ) );
@@ -147,6 +147,7 @@ class BulkDelete {
 				 */
 				foreach ( $uploaded_files as $entry_id => $entry_files ) {
 					$deleted_urls = (array) gform_get_meta( $entry_id, 'bdfgf_deleted_file_urls' );
+					$deleted_count = 0;
 
 					foreach ( $entry_files as $file ) {
 						/*
@@ -154,11 +155,13 @@ class BulkDelete {
 						 * This prevents errors in case the file was already deleted manually or by another process,
 						 * and ensures we only mark files as deleted that were actually deleted by us.
 						 */
-						if ( is_string( $file['path'] ) ) {
-							if ( is_readable( $file['path'] ) ) {
-								$deleted = wp_delete_file( $file['path'] );
+						if ( is_string( $file['path'] ) && is_readable( $file['path'] ) ) {
+							$deleted = wp_delete_file( $file['path'] );
 
-								if ( $deleted && ! empty( $file['url'] ) ) {
+							if ( $deleted ) {
+								++$deleted_count;
+
+								if ( ! empty( $file['url'] ) ) {
 									$deleted_urls[] = $file['url'];
 								}
 							}
@@ -169,13 +172,15 @@ class BulkDelete {
 					 * Add a note to the entry about the bulk deletion of files, including the number of deleted files
 					 * and the user who performed the deletion, to keep a record of the deletion in the entry details.
 					 */
-					$user = wp_get_current_user();
-					$note = sprintf(
-						// translators: %s: The number of deleted files.
-						esc_html( _n( 'Bulk deleted %s file.', 'Bulk deleted %s files.', count( $entry_files ), 'bulk-download-for-gravity-forms' ) ),
-						count( $entry_files )
-					);
-					GFAPI::add_note( $entry_id, $user->ID, $user->display_name, $note, $note_type = 'user' );
+					if ( $deleted_count > 0 ) {
+						$user = wp_get_current_user();
+						$note = sprintf(
+							// translators: %s: The number of deleted files.
+							esc_html( _n( 'Bulk deleted %s file.', 'Bulk deleted %s files.', $deleted_count, 'bulk-download-for-gravity-forms' ) ),
+							$deleted_count
+						);
+						GFAPI::add_note( $entry_id, $user->ID, $user->display_name, $note, 'user' );
+					}
 
 					$deleted_urls = array_values( array_unique( array_filter( $deleted_urls ) ) );
 
@@ -216,21 +221,17 @@ class BulkDelete {
 	 *
 	 * @param array $upload_fields Array of all uploaded_fields.
 	 * @param array $entry_ids     Array of entry IDs.
+	 * @param int   $form_id       The form ID.
 	 *
 	 * @return array
 	 */
-	public function get_uploaded_files_to_delete( $upload_fields, $entry_ids ) {
+	public function get_uploaded_files_to_delete( $upload_fields, $entry_ids, $form_id ) {
 		$uploaded_files = [];
-
-		/*
-		 * The current upload directory.
-		 */
-		$wp_upload_dir = wp_upload_dir();
 
 		foreach ( $entry_ids as $entry_id ) {
 			$entry = GFAPI::get_entry( $entry_id );
 
-			if ( is_wp_error( $entry ) ) {
+			if ( is_wp_error( $entry ) || (int) rgar( $entry, 'form_id' ) !== (int) $form_id ) {
 				continue;
 			}
 
@@ -255,7 +256,11 @@ class BulkDelete {
 						continue;
 					}
 
-					$file_path = str_replace( $wp_upload_dir['baseurl'], $wp_upload_dir['basedir'], $file_url );
+					$file_path = FormFields::get_upload_path_from_url( $file_url );
+
+					if ( ! $file_path ) {
+						continue;
+					}
 
 					$uploaded_files[ $entry_id ][] = [
 						'field_id' => (int) $upload_field_id,

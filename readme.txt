@@ -4,7 +4,7 @@ Contributors: VCATconsulting, Kau-Boy, shogathu, nida78
 Requires at least: 5.0
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 4.0.0
+Stable tag: 4.1.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -80,6 +80,14 @@ The Plugin provides a filter `bdfgf_single_entry_uploaded_files` and an action `
 You can find example usage of the [bdfgf_single_entry_uploaded_files](https://gist.github.com/vcat-support/600ffe67054d34a546bcfa155bf978e0) filter and the [bdfgf_after_uploaded_files](https://gist.github.com/vcat-support/5b5005b28c8961562998bca28d201535) action in the two linked GISTs.
 
 == Changelog ==
+
+= 4.0.1 =
+* Harden upload URL to file path resolution to ensure files are resolved only inside the WordPress uploads directory.
+* Validate that selected entries belong to the requested form before download, delete, and AJAX validation.
+* Improve AJAX request sanitization for bulk action validation.
+* Sanitize ZIP archive names and internal ZIP file paths more strictly.
+* Improve bulk delete notes to count only successfully deleted files.
+* Improve temporary ZIP cleanup and download header handling.
 
 = 4.0.0 =
 

@@ -40,14 +40,20 @@ class RowActions {
 		if ( FormFields::has_uploaded_files( $entry ) && $this->entry_has_readable_files( $entry, (int) $entry['form_id'] ) ) {
 			$form = \GFAPI::get_form( $form_id );
 
-			$link = add_query_arg(
-				[
-					'page'        => 'gf_entries',
-					'action'      => 'gf_bulk_download',
-					'gf_entry_id' => esc_attr( $entry['id'] ),
-					'gf_form_id'  => esc_attr( $entry['form_id'] ),
-				],
-				admin_url( 'admin.php' )
+			$entry_id = (int) rgar( $entry, 'id' );
+			$form_id  = (int) rgar( $entry, 'form_id' );
+
+			$link = wp_nonce_url(
+				add_query_arg(
+					[
+						'page'        => 'gf_entries',
+						'action'      => 'gf_bulk_download',
+						'gf_entry_id' => $entry_id,
+						'gf_form_id'  => $form_id,
+					],
+					admin_url( 'admin.php' )
+				),
+				'bdfgf_bulk_download_entry_' . $entry_id
 			);
 
 			printf(
@@ -65,13 +71,13 @@ class RowActions {
 				$link = add_query_arg(
 					[
 						'action'      => 'bdfgf_bulk_delete',
-						'gf_entry_id' => esc_attr( $entry['id'] ),
-						'gf_form_id'  => esc_attr( $entry['form_id'] ),
+						'gf_entry_id' => $entry_id,
+						'gf_form_id'  => $form_id,
 					],
 					admin_url( 'admin-post.php' )
 				);
 
-				$link = wp_nonce_url( $link, 'bdfgf_bulk_delete_entry_' . $entry['id'] );
+				$link = wp_nonce_url( $link, 'bdfgf_bulk_delete_entry_' . $entry_id );
 
 				printf(
 					'<span class="delete bulk-download"> | <a class="bdfgf-confirm-delete-link"  aria-label="%1$s" href="%2$s">%3$s</a></span>',
@@ -114,8 +120,6 @@ class RowActions {
 		$deleted_urls = array_values( array_filter( $deleted_urls, 'is_string' ) );
 		$deleted_set  = array_fill_keys( $deleted_urls, true );
 
-		$wp_upload_dir = wp_upload_dir();
-
 		foreach ( $upload_field_ids as $field_id ) {
 			$raw = (string) rgar( $entry, (string) $field_id );
 			if ( '' === $raw ) {
@@ -138,9 +142,9 @@ class RowActions {
 					continue;
 				}
 
-				$path = str_replace( $wp_upload_dir['baseurl'], $wp_upload_dir['basedir'], $url );
+				$path = FormFields::get_upload_path_from_url( $url );
 
-				if ( is_readable( $path ) ) {
+				if ( $path && is_readable( $path ) ) {
 					return true;
 				}
 			}

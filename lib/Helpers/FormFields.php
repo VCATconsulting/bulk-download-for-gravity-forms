@@ -68,6 +68,50 @@ class FormFields {
 	}
 
 	/**
+	 * Resolve an upload URL to a local path.
+	 *
+	 * @param string $url Upload URL.
+	 *
+	 * @return false|string
+	 */
+	public static function get_upload_path_from_url( $url ) {
+		$wp_upload_dir = wp_upload_dir();
+		$base_url      = wp_parse_url( $wp_upload_dir['baseurl'] );
+		$url_parts     = wp_parse_url( (string) $url );
+
+		if (
+			empty( $base_url['scheme'] ) ||
+			empty( $base_url['host'] ) ||
+			empty( $base_url['path'] ) ||
+			empty( $url_parts['scheme'] ) ||
+			empty( $url_parts['host'] ) ||
+			empty( $url_parts['path'] )
+		) {
+			return false;
+		}
+
+		if (
+			strtolower( $base_url['scheme'] ) !== strtolower( $url_parts['scheme'] ) ||
+			strtolower( $base_url['host'] ) !== strtolower( $url_parts['host'] )
+		) {
+			return false;
+		}
+
+		$base_url_path = trailingslashit( wp_normalize_path( $base_url['path'] ) );
+		$url_path      = wp_normalize_path( $url_parts['path'] );
+
+		if ( 0 !== strpos( trailingslashit( $url_path ), $base_url_path ) ) {
+			return false;
+		}
+
+		$relative_path = ltrim( substr( $url_path, strlen( untrailingslashit( $base_url_path ) ) ), '/' );
+		$path          = wp_normalize_path( trailingslashit( $wp_upload_dir['basedir'] ) . $relative_path );
+		$base_dir      = wp_normalize_path( trailingslashit( $wp_upload_dir['basedir'] ) );
+
+		return 0 === strpos( $path, $base_dir ) ? $path : false;
+	}
+
+	/**
 	 * Check if an entry has at least one uploaded file in one of it's upload fields.
 	 *
 	 * @param array|int $entry The entry array or the entry ID.

@@ -37,22 +37,16 @@ class BulkActionValidator {
 		 */
 		check_ajax_referer( 'bdfgf_bulk_validate', 'nonce' );
 
-		if ( ! isset( $_POST['nonce'] ) ) { // phpcs:ignore
-			wp_send_json_error( [ 'message' => 'missing_nonce' ], 400 );
-		}
-
-		if ( ! check_ajax_referer( 'bdfgf_bulk_validate', 'nonce', false ) ) {
-			wp_send_json_error( [ 'message' => 'bad_nonce' ], 403 );
-		}
-
-		$form_id     = isset( $_POST['form_id'] ) ? (int) $_POST['form_id'] : 0; // phpcs:ignore
-		$bulk_action = isset( $_POST['bulk_action'] ) ? sanitize_text_field( (string) $_POST['bulk_action'] ) : ''; // phpcs:ignore
+		$form_id     = isset( $_POST['form_id'] ) ? absint( wp_unslash( $_POST['form_id'] ) ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$bulk_action = isset( $_POST['bulk_action'] ) ? sanitize_key( wp_unslash( $_POST['bulk_action'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
 		/*
 		 * Sanitize entry IDs: ensure it's an array of integers.
 		 * We expect entry_ids[] as an array from the AJAX request, but we need to validate and sanitize it.
 		 */
-		$entry_ids = isset( $_POST['entry_ids'] ) && is_array( $_POST['entry_ids'] ) ? array_map( 'intval', $_POST['entry_ids'] ) : []; // phpcs:ignore
+		$entry_ids = isset( $_POST['entry_ids'] ) && is_array( $_POST['entry_ids'] )
+			? array_map( 'absint', wp_unslash( $_POST['entry_ids'] ) )
+			: []; // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
 		if ( ! $form_id ) {
 			wp_send_json_error( [ 'message' => 'missing_form_id' ], 400 );
@@ -98,20 +92,18 @@ class BulkActionValidator {
 			);
 		}
 
-		$wp_upload_dir = wp_upload_dir();
-
 		$total_refs = 0; // referenced URLs in selected entries.
 		$readable   = 0; // physically readable files (downloadable/deletable).
 		$missing    = 0; // referenced but missing.
 
 		foreach ( $entry_ids as $entry_id ) {
 			$entry = GFAPI::get_entry( $entry_id );
-			if ( is_wp_error( $entry ) ) {
+			if ( is_wp_error( $entry ) || (int) rgar( $entry, 'form_id' ) !== (int) $form_id ) {
 				continue;
 			}
 
-			foreach ( $upload_field_ids as $fid ) {
-				$raw = (string) rgar( $entry, (string) $fid );
+			foreach ( $upload_field_ids as $uploaded_field_id ) {
+				$raw = (string) rgar( $entry, (string) $uploaded_field_id );
 				if ( '' === $raw ) {
 					continue;
 				}
@@ -119,15 +111,15 @@ class BulkActionValidator {
 				$decoded = json_decode( $raw, true );
 				$urls    = is_array( $decoded ) ? $decoded : [ $raw ];
 
-				foreach ( (array) $urls as $u ) {
-					if ( ! is_string( $u ) || '' === trim( $u ) ) {
+				foreach ( (array) $urls as $url ) {
+					if ( ! is_string( $url ) || '' === trim( $url ) ) {
 						continue;
 					}
 
 					++$total_refs;
 
-					$path = str_replace( $wp_upload_dir['baseurl'], $wp_upload_dir['basedir'], $u );
-					if ( is_readable( $path ) ) {
+					$path = FormFields::get_upload_path_from_url( $url );
+					if ( $path && is_readable( $path ) ) {
 						++$readable;
 					} else {
 						++$missing;

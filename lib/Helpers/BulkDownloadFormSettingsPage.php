@@ -191,15 +191,15 @@ class BulkDownloadFormSettingsPage {
 		 * Save settings.
 		 */
 		$form['bulkDownloadSettings']['customArchivename']                = (bool) rgar( $values, 'customArchivename' );
-		$form['bulkDownloadSettings']['downloadArchivename']              = rgar( $values, 'downloadArchivename' );
+		$form['bulkDownloadSettings']['downloadArchivename']              = sanitize_text_field( (string) rgar( $values, 'downloadArchivename' ) );
 		$form['bulkDownloadSettings']['customFoldername']                 = (bool) rgar( $values, 'customFoldername' );
-		$form['bulkDownloadSettings']['downloadFoldername']               = rgar( $values, 'downloadFoldername' );
+		$form['bulkDownloadSettings']['downloadFoldername']               = sanitize_text_field( (string) rgar( $values, 'downloadFoldername' ) );
 		$form['bulkDownloadSettings']['customNoDownloadText']             = (bool) rgar( $values, 'customNoDownloadText' );
-		$form['bulkDownloadSettings']['noDownloadText']                   = rgar( $values, 'noDownloadText' );
+		$form['bulkDownloadSettings']['noDownloadText']                   = sanitize_text_field( (string) rgar( $values, 'noDownloadText' ) );
 		$form['bulkDownloadSettings']['customNoUploadFieldText']          = (bool) rgar( $values, 'customNoUploadFieldText' );
-		$form['bulkDownloadSettings']['noUploadFieldText']                = rgar( $values, 'noUploadFieldText' );
+		$form['bulkDownloadSettings']['noUploadFieldText']                = sanitize_text_field( (string) rgar( $values, 'noUploadFieldText' ) );
 		$form['bulkDownloadSettings']['customDeleteEntryFiles']           = (bool) rgar( $values, 'customDeleteEntryFiles' );
-		$form['bulkDownloadSettings']['customDeleteEntryFilesMarkerText'] = rgar( $values, 'customDeleteEntryFilesMarkerText' );
+		$form['bulkDownloadSettings']['customDeleteEntryFilesMarkerText'] = sanitize_text_field( (string) rgar( $values, 'customDeleteEntryFilesMarkerText' ) );
 
 		/*
 		 * Save form.
@@ -234,7 +234,7 @@ class BulkDownloadFormSettingsPage {
 				'before_fields'  => function () use ( $form ) {
 					return sprintf(
 						'<script type="text/javascript">var form = %s;</script>',
-						wp_json_encode( $form )
+						wp_json_encode( $form, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT )
 					);
 				},
 			]
