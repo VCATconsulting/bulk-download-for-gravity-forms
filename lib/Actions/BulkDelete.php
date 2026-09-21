@@ -146,17 +146,25 @@ class BulkDelete {
 				 * Loop through all uploaded files and delete them.
 				 */
 				foreach ( $uploaded_files as $entry_id => $entry_files ) {
-					$deleted_urls = (array) gform_get_meta( $entry_id, 'bdfgf_deleted_file_urls' );
+					$deleted_urls  = (array) gform_get_meta( $entry_id, 'bdfgf_deleted_file_urls' );
 					$deleted_count = 0;
 
 					foreach ( $entry_files as $file ) {
+						clearstatcache( true );
+						$current_path = FormFields::get_upload_path_from_url( $file['url'] );
+						if ( false === $current_path || $current_path !== $file['path'] ) {
+							continue;
+						}
+
 						/*
 						 * Delete only when the file exists and is readable.
 						 * This prevents errors in case the file was already deleted manually or by another process,
 						 * and ensures we only mark files as deleted that were actually deleted by us.
 						 */
-						if ( is_string( $file['path'] ) && is_readable( $file['path'] ) ) {
-							$deleted = wp_delete_file( $file['path'] );
+						if ( is_string( $file['path'] ) && ! is_link( $file['path'] ) && is_file( $file['path'] ) && is_readable( $file['path'] ) ) {
+							$result = wp_delete_file( $file['path'] );
+							clearstatcache( true, $file['path'] );
+							$deleted = false !== $result && ! file_exists( $file['path'] ) && ! is_link( $file['path'] );
 
 							if ( $deleted ) {
 								++$deleted_count;

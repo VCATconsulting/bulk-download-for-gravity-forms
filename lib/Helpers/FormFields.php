@@ -104,10 +104,52 @@ class FormFields {
 			return false;
 		}
 
+		/*
+		 * Resolve the configured upload directory before comparing filesystem paths.
+		 * wp_normalize_path() alone does not resolve traversal segments or symlinks.
+		 */
 		$relative_path = ltrim( substr( $url_path, strlen( untrailingslashit( $base_url_path ) ) ), '/' );
-		$path          = wp_normalize_path( trailingslashit( $wp_upload_dir['basedir'] ) . $relative_path );
-		$base_dir      = wp_normalize_path( trailingslashit( $wp_upload_dir['basedir'] ) );
+		$base_dir      = realpath( $wp_upload_dir['basedir'] );
 
+		/*
+		 * Reject an unavailable upload directory, an empty relative path and null bytes.
+		 */
+		if ( false === $base_dir || '' === $relative_path || false !== strpos( $relative_path, "\0" ) ) {
+			return false;
+		}
+
+		$base_dir = trailingslashit( wp_normalize_path( $base_dir ) );
+		$path     = untrailingslashit( $base_dir );
+
+		/*
+		 * Reject traversal and check each path component, including parent directories.
+		 * Symlinks are rejected because this resolver is also used for file deletion.
+		 */
+		foreach ( explode( '/', $relative_path ) as $part ) {
+			if ( '' === $part || '.' === $part || '..' === $part ) {
+				return false;
+			}
+
+			$path .= '/' . $part;
+			if ( is_link( $path ) ) {
+				return false;
+			}
+		}
+
+		/*
+		 * Only return an existing regular file. Missing paths cannot be canonicalized.
+		 */
+		$path = realpath( $path );
+		if ( false === $path || ! is_file( $path ) ) {
+			return false;
+		}
+
+		$path = wp_normalize_path( $path );
+
+		/*
+		 * The trailing slash keeps similarly named sibling directories outside the boundary.
+		 * This check does not prevent a concurrent filesystem change after validation.
+		 */
 		return 0 === strpos( $path, $base_dir ) ? $path : false;
 	}
 

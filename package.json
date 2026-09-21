@@ -1,6 +1,6 @@
 {
   "name": "@bdfgf/bulk-download-for-gravity-forms",
-  "version": "1.0.0",
+  "version": "4.2.0",
   "description": "Bulk download all files from one or multiple Gravity Forms entries in one go and give the option to delete file from an entry or all files from multiple entries after download.",
   "author": "Team WordPress - VCAT Consulting GmbH",
   "license": "GPL-3.0-or-later",
@@ -26,7 +26,7 @@
     "lint:pkg-json": "wp-scripts lint-pkg-json",
     "lint": "npm run lint:js && npm run lint:css",
     "lint:fix": "npm run lint:js:fix && npm run lint:css:fix",
-    "make-pot": "wp i18n make-pot . languages/colorful-fields-for-gravity-forms.pot --exclude=vendor,node_modules,src",
+    "make-pot": "wp i18n make-pot . languages/bulk-download-for-gravity-forms.pot --exclude=vendor,node_modules,src",
     "make-json": "wp i18n make-json languages/ --no-purge",
     "packages-update": "wp-scripts packages-update",
     "postpackages-update": "npm run build",

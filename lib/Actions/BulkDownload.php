@@ -10,6 +10,7 @@ namespace BDFGF\Actions;
 use BDFGF\Helpers\FormFields;
 use GFAPI;
 use GFCommon;
+use WordPress\AiClient\Common\Exception\RuntimeException;
 use ZipArchive;
 
 /**
@@ -23,6 +24,31 @@ class BulkDownload {
 	public function init() {
 		add_action( 'admin_init', [ $this, 'handle_single_entry_download' ], 1 );
 		add_action( 'gform_entry_list_action', [ $this, 'handle_bulk_action_download' ], 10, 3 );
+		add_filter( 'nonce_life', [ $this, 'filter_download_nonce_life' ], 10, 2 );
+	}
+
+	/**
+	 * Filter the nonce lifetime for single-entry download links.
+	 *
+	 * @param int        $lifespan Lifespan of nonces in seconds.
+	 * @param string|int $action   The nonce action.
+	 *
+	 * @return int
+	 */
+	public function filter_download_nonce_life( $lifespan, $action ) {
+		$download_action_prefix = 'bdfgf_bulk_download_entry_';
+
+		if ( 0 !== strpos( (string) $action, $download_action_prefix ) ) {
+			return $lifespan;
+		}
+
+		/**
+		 * Filters the lifetime of single-entry download nonces.
+		 *
+		 * @param int        $lifespan Lifespan in seconds.
+		 * @param string|int $action   The nonce action containing the entry ID.
+		 */
+		return max( 1, absint( apply_filters( 'bdfgf_download_nonce_life', $lifespan, $action ) ) );
 	}
 
 	/**
@@ -42,10 +68,24 @@ class BulkDownload {
 			return;
 		}
 
-		$form_id  = (int) rgget( 'gf_form_id' );
-		$entry_id = absint( rgget( 'gf_entry_id' ) );
+		$form_id      = (int) rgget( 'gf_form_id' );
+		$entry_id     = absint( rgget( 'gf_entry_id' ) );
+		$is_mail_link = 1 === absint( rgget( 'bdfgf_mail_link' ) );
 
-		check_admin_referer( 'bdfgf_bulk_download_entry_' . $entry_id );
+		/*
+		 * Check if the download link is valid, if it is a mail link. Otherwise check the nonce for the bulk download action.
+		 */
+		if ( $is_mail_link ) {
+			if ( ! $this->is_valid_mail_download_token( $form_id, $entry_id ) ) {
+				wp_die(
+					esc_html__( 'The download link is invalid or has expired.', 'bulk-download-for-gravity-forms' ),
+					'',
+					[ 'response' => 403 ]
+				);
+			}
+		} else {
+			check_admin_referer( 'bdfgf_bulk_download_entry_' . $entry_id );
+		}
 
 		/*
 		 * Pass an empty array if entry id is not valid, to trigger the appropiate error message in bulk_download().
@@ -165,9 +205,12 @@ class BulkDownload {
 
 		try {
 			/*
-			 * Create a temp file, so even if the process dies, the file might eventually get deleted.
+			 * Create the temporary ZIP file. The finally block removes it on normal completion or exceptions.
 			 */
 			$zip_filename = wp_tempnam( $download_filename . '.zip' );
+			if ( ! $zip_filename ) {
+				throw new \Exception( __( 'Could not create a temporary ZIP file.', 'bulk-download-for-gravity-forms' ) );
+			}
 
 			/*
 			 * Create the ZipArchive.
@@ -199,7 +242,18 @@ class BulkDownload {
 			 */
 			gf_do_action( [ 'bdfgf_after_uploaded_files', $form['id'] ], $zip, $uploaded_files, $form );
 
-			$zip->close();
+			/*
+			 * Files are written when the archive is finalized; open() succeeding is not enough.
+			 */
+			if ( ! $zip->close() ) {
+				throw new \Exception( __( 'Could not finalize the ZIP archive.', 'bulk-download-for-gravity-forms' ) );
+			}
+
+			clearstatcache( true, $zip_filename );
+			$zip_size = is_file( $zip_filename ) && is_readable( $zip_filename ) ? filesize( $zip_filename ) : false;
+			if ( false === $zip_size || 0 === $zip_size ) {
+				throw new \Exception( __( 'The ZIP archive is unavailable or empty.', 'bulk-download-for-gravity-forms' ) );
+			}
 
 			/*
 			 * Send ZIP file.
@@ -212,12 +266,11 @@ class BulkDownload {
 				throw new \Exception( __( 'Headers already sent.', 'bulk-download-for-gravity-forms' ) );
 			}
 
-			header( 'Pragma: public' );
-			header( 'Expires: 0' );
-			header( 'Cache-Control: must-revalidate, post-check=0, pre-check=0' );
+			nocache_headers();
+			header( 'Cache-Control: private, no-store, no-cache, must-revalidate, max-age=0' );
 			header( 'Content-Type: application/octet-stream' );
 			header( 'Content-Disposition: attachment; filename="' . $download_filename . '.zip"' );
-			header( 'Content-Length: ' . filesize( $zip_filename ) );
+			header( 'Content-Length: ' . $zip_size );
 			flush();
 			readfile( $zip_filename ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_readfile
 			flush();
@@ -269,7 +322,19 @@ class BulkDownload {
 			/*
 			 * Get the first entry.
 			 */
-			$first_entry = isset( $entry_ids[0] ) ? GFAPI::get_entry( $entry_ids[0] ) : null;
+
+			$first_entry = null;
+			foreach ( $entry_ids as $entry_id ) {
+				$candidate = GFAPI::get_entry( $entry_id );
+				if ( ! is_wp_error( $candidate ) && (int) rgar( $candidate, 'form_id' ) === (int) $form['id'] ) {
+					$first_entry = $candidate;
+					break;
+				}
+			}
+
+			if ( null === $first_entry ) {
+				wp_die( esc_html__( 'No valid entries found for this form.', 'bulk-download-for-gravity-forms' ), '', [ 'response' => 404 ] );
+			}
 
 			/*
 			 * Replace all merge tags.
@@ -382,6 +447,8 @@ class BulkDownload {
 	 * @param array      $form           The form Object.
 	 *
 	 * @return ZipArchive
+	 *
+	 * @throws \RuntimeException If Runtime fails.
 	 */
 	public function zip_uploaded_files( $uploaded_files, $zip, $form ) {
 		foreach ( $uploaded_files as $entry_id => $entry_files ) {
@@ -430,7 +497,9 @@ class BulkDownload {
 					 */
 					$entry_filename = gf_apply_filters( [ 'bdfgf_entry_filename', $form['id'] ], $entry_filename, $entry_id, $uploaded_file );
 					$entry_filename = $this->sanitize_zip_entry_filename( $entry_filename, $entry_id . '/' . $file_basename );
-					$zip->addFile( $uploaded_file, $entry_filename );
+					if ( ! $zip->addFile( $uploaded_file, $entry_filename ) ) {
+						throw new \RuntimeException( esc_html__( 'Could not add an upload to the ZIP archive.', 'bulk-download-for-gravity-forms' ) );
+					}
 				}
 			}
 		}
@@ -475,5 +544,27 @@ class BulkDownload {
 		}
 
 		return ! empty( $sanitized_parts ) ? implode( '/', $sanitized_parts ) : $fallback;
+	}
+
+	/**
+	 * Check if the download token is valid.
+	 *
+	 * @param int $form_id The form ID.
+	 * @param int $entry_id The entry ID.
+	 *
+	 * @return bool
+	 */
+	private function is_valid_mail_download_token( $form_id, $entry_id ) {
+		$expires   = absint( rgget( 'bdfgf_expires' ) );
+		$signature = sanitize_text_field( (string) rgget( 'bdfgf_signature' ) );
+
+		if ( 0 === $form_id || 0 === $entry_id || $expires < time() || '' === $signature ) {
+			return false;
+		}
+
+		$payload  = $form_id . '|' . $entry_id . '|' . $expires;
+		$expected = hash_hmac( 'sha256', $payload, wp_salt( 'auth' ) );
+
+		return hash_equals( $expected, $signature );
 	}
 }

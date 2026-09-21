@@ -93,43 +93,42 @@ document.addEventListener( 'DOMContentLoaded', function () {
 
 	let isSubmitting = false;
 
-		async function onApplyClick( e ) {
+	async function onApplyClick( e ) {
 		if ( isSubmitting ) {
+			e.preventDefault();
+			e.stopPropagation();
 			return;
 		}
 
 		const btn = e.currentTarget;
 		const form = btn.closest( 'form' );
 		const selected = getSelectedBulkAction( form );
-
-		// Nur unsere Aktionen
 		if ( selected !== bulkDeleteValue && selected !== bulkDownloadValue ) {
 			return;
 		}
 
 		const entryIds = getSelectedEntryIds( form );
 		if ( ! entryIds.length ) {
-			return; // WP/GF Standardmeldung
+			return;
 		}
 
-		// Bulk Delete: Confirm (wie bisher)
-		if ( selected === bulkDeleteValue ) {
-			if ( ! window.confirm( confirmMessage ) ) {
-				e.preventDefault();
-				e.stopPropagation();
-				return false;
-			}
-		}
-
-		// Precheck per AJAX
 		e.preventDefault();
 		e.stopPropagation();
+
+		if ( selected === bulkDeleteValue && ! window.confirm( confirmMessage ) ) {
+			return;
+		}
 
 		const formId = cfg.formId;
 		if ( ! formId ) {
 			window.alert( msgValidationFailed );
 			return;
 		}
+
+		const buttons = [ btnTop, btnBottom ].filter( Boolean );
+		const disabledStates = buttons.map( ( button ) => button.disabled );
+		isSubmitting = true;
+		buttons.forEach( ( button ) => { button.disabled = true; } );
 
 		try {
 			const data = await validateBulkAction( {
@@ -138,7 +137,6 @@ document.addEventListener( 'DOMContentLoaded', function () {
 				entryIds,
 			} );
 
-			// data.readable == "downloadbar/löschbar" (serverseitig als readable gezählt)
 			if ( Number( data.readable ) <= 0 ) {
 				window.alert(
 					selected === bulkDownloadValue ? msgNoDownloadables : msgNoDeletables
@@ -146,19 +144,12 @@ document.addEventListener( 'DOMContentLoaded', function () {
 				return;
 			}
 
-			// Optional: teilweise fehlend -> confirm
-			// if ( Number( data.missing ) > 0 ) {
-			// 	const ok = window.confirm( `${data.readable} available, ${data.missing} missing. Continue?` );
-			// 	if ( ! ok ) return;
-			// }
-
-			// Submit jetzt wirklich
-			isSubmitting = true;
 			form.submit();
 		} catch ( err ) {
 			window.alert( msgValidationFailed );
 		} finally {
 			isSubmitting = false;
+			buttons.forEach( ( button, index ) => { button.disabled = disabledStates[ index ]; } );
 		}
 	}
 

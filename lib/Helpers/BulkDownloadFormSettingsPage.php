@@ -152,6 +152,35 @@ class BulkDownloadFormSettingsPage {
 						],
 					],
 					[
+						'name'  => 'emailDownloadLinkLifetimeValue',
+						'type'  => 'text',
+						'class' => 'small',
+						'label' => esc_html__( 'Email download link validity', 'bulk-download-for-gravity-forms' ),
+					],
+					[
+						'name'    => 'emailDownloadLinkLifetimeUnit',
+						'type'    => 'select',
+						'label'   => esc_html__( 'Validity unit', 'bulk-download-for-gravity-forms' ),
+						'choices' => [
+							[
+								'label' => esc_html__( 'Hours', 'bulk-download-for-gravity-forms' ),
+								'value' => 'hours',
+							],
+							[
+								'label' => esc_html__( 'Days', 'bulk-download-for-gravity-forms' ),
+								'value' => 'days',
+							],
+							[
+								'label' => esc_html__( 'Weeks', 'bulk-download-for-gravity-forms' ),
+								'value' => 'weeks',
+							],
+							[
+								'label' => esc_html__( 'Years', 'bulk-download-for-gravity-forms' ),
+								'value' => 'years',
+							],
+						],
+					],
+					[
 						'name'    => 'customDeleteEntryFiles',
 						'type'    => 'toggle',
 						'label'   => esc_html__( 'Allow to delete entry files', 'bulk-download-for-gravity-forms' ),
@@ -182,10 +211,22 @@ class BulkDownloadFormSettingsPage {
 	 * @param array $values Submitted settings values.
 	 */
 	public static function process_form_settings( $values ) {
+		check_admin_referer( 'gform_settings_save', 'gform_settings_save_nonce' );
+
+		if ( ! GFCommon::current_user_can_any( 'gravityforms_edit_forms' ) ) {
+			wp_die( esc_html__( 'You do not have permission to edit form settings.', 'bulk-download-for-gravity-forms' ), '', [ 'response' => 403 ] );
+		}
+
+		$form_id = filter_var( rgget( 'id' ), FILTER_VALIDATE_INT, [ 'options' => [ 'min_range' => 1 ] ] );
+
 		/*
 		 * Get form object.
 		 */
-		$form = self::get_form( rgget( 'form_id' ) );
+		$form = $form_id ? self::get_form( rgget( 'form_id' ) ) : false;
+
+		if ( ! is_array( $form ) || (int) rgar( $form, 'id' ) !== $form_id ) {
+			wp_die( esc_html__( 'Form not found.', 'bulk-download-for-gravity-forms' ), '', [ 'response' => 404 ] );
+		}
 
 		/*
 		 * Save settings.
@@ -201,10 +242,29 @@ class BulkDownloadFormSettingsPage {
 		$form['bulkDownloadSettings']['customDeleteEntryFiles']           = (bool) rgar( $values, 'customDeleteEntryFiles' );
 		$form['bulkDownloadSettings']['customDeleteEntryFilesMarkerText'] = sanitize_text_field( (string) rgar( $values, 'customDeleteEntryFilesMarkerText' ) );
 
+		$email_link_lifetime_value = max(
+			1,
+			absint( rgar( $values, 'emailDownloadLinkLifetimeValue' ) )
+		);
+		$email_link_lifetime_unit  = sanitize_key(
+			(string) rgar( $values, 'emailDownloadLinkLifetimeUnit' )
+		);
+		$allowed_units             = [ 'hours', 'days', 'weeks', 'years' ];
+
+		if ( ! in_array( $email_link_lifetime_unit, $allowed_units, true ) ) {
+			$email_link_lifetime_unit = 'days';
+		}
+
+		$form['bulkDownloadSettings']['emailDownloadLinkLifetimeValue'] = $email_link_lifetime_value;
+		$form['bulkDownloadSettings']['emailDownloadLinkLifetimeUnit']  = $email_link_lifetime_unit;
+
 		/*
 		 * Save form.
 		 */
-		GFAPI::update_form( $form );
+		$result = GFAPI::update_form( $form );
+		if ( is_wp_error( $result ) || false === $result ) {
+			wp_die( esc_html__( 'The form settings could not be saved.', 'bulk-download-for-gravity-forms' ), '', [ 'response' => 500 ] );
+		}
 
 		/*
 		 * Update cached form object.
@@ -219,17 +279,34 @@ class BulkDownloadFormSettingsPage {
 		/*
 		 * Get form object.
 		 */
-		$form_id = absint( rgget( 'id' ) );
-		$form    = self::get_form( $form_id );
+		$form_id        = absint( rgget( 'id' ) );
+		$form           = self::get_form( $form_id );
+		$initial_values = rgar( $form, 'bulkDownloadSettings' );
+
+		if ( ! is_array( $initial_values ) ) {
+			$initial_values = [];
+		}
+
+		/*
+		 * Set default values for download link lifetime.
+		 */
+		$initial_values = wp_parse_args(
+			$initial_values,
+			[
+				'emailDownloadLinkLifetimeValue' => 3,
+				'emailDownloadLinkLifetimeUnit'  => 'days',
+			]
+		);
 
 		$renderer = new Settings(
 			[
+				'capability'     => 'gravityforms_edit_forms',
 				'header'         => [
 					'icon'  => 'fa fa-lock',
 					'title' => esc_html__( 'Bulk Download', 'bulk-download-for-gravity-forms' ),
 				],
 				'fields'         => self::settings_fields( $form_id ),
-				'initial_values' => rgar( $form, 'bulkDownloadSettings' ),
+				'initial_values' => $initial_values,
 				'save_callback'  => [ self::class, 'process_form_settings' ],
 				'before_fields'  => function () use ( $form ) {
 					return sprintf(

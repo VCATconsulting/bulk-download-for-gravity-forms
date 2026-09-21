@@ -124,17 +124,21 @@ class DownloadMergeTag {
 		$entry_id = (int) rgar( $entry, 'id' );
 		$form_id  = (int) rgar( $entry, 'form_id' );
 
-		$link = wp_nonce_url(
-			add_query_arg(
-				[
-					'page'        => 'gf_entries',
-					'action'      => 'gf_bulk_download',
-					'gf_entry_id' => $entry_id,
-					'gf_form_id'  => $form_id,
-				],
-				admin_url( 'admin.php' )
-			),
-			'bdfgf_bulk_download_entry_' . $entry_id
+		$expires   = time() + $this->get_mail_link_lifetime( $form_id );
+		$payload   = $form_id . '|' . $entry_id . '|' . $expires;
+		$signature = hash_hmac( 'sha256', $payload, wp_salt( 'auth' ) );
+
+		$link = add_query_arg(
+			[
+				'page'            => 'gf_entries',
+				'action'          => 'gf_bulk_download',
+				'gf_entry_id'     => $entry_id,
+				'gf_form_id'      => $form_id,
+				'bdfgf_expires'   => $expires,
+				'bdfgf_signature' => $signature,
+				'bdfgf_mail_link' => 1,
+			],
+			admin_url( 'admin.php' )
 		);
 
 		return sprintf(
@@ -165,5 +169,39 @@ class DownloadMergeTag {
 		}
 
 		return $text;
+	}
+
+	/**
+	 * Get the lifetime of an email download link.
+	 *
+	 * @param int $form_id Form ID.
+	 *
+	 * @return int Lifetime in seconds.
+	 */
+	private function get_mail_link_lifetime( $form_id ) {
+		$lifetime = 3 * DAY_IN_SECONDS;
+		$form     = \GFAPI::get_form( $form_id );
+
+		if ( is_array( $form ) ) {
+			$settings    = rgar( $form, 'bulkDownloadSettings' );
+			$value       = is_array( $settings ) ? absint( rgar( $settings, 'emailDownloadLinkLifetimeValue' ) ) : 0;
+			$unit        = is_array( $settings ) ? sanitize_key( (string) rgar( $settings, 'emailDownloadLinkLifetimeUnit' ) ) : '';
+			$multipliers = [
+				'hours' => HOUR_IN_SECONDS,
+				'days'  => DAY_IN_SECONDS,
+				'weeks' => WEEK_IN_SECONDS,
+				'years' => YEAR_IN_SECONDS,
+			];
+
+			if ( 0 < $value && isset( $multipliers[ $unit ] ) ) {
+				$lifetime = $value * $multipliers[ $unit ];
+			}
+		}
+
+		$lifetime = absint(
+			apply_filters( 'bdfgf_email_download_link_lifetime', $lifetime, $form_id )
+		);
+
+		return min( 10 * YEAR_IN_SECONDS, max( HOUR_IN_SECONDS, $lifetime ) );
 	}
 }

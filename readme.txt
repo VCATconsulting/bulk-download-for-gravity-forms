@@ -2,9 +2,9 @@
 
 Contributors: VCATconsulting, Kau-Boy, shogathu, nida78
 Requires at least: 5.0
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 4.1.0
+Stable tag: 4.2.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -42,10 +42,11 @@ Deleted files are excluded from the ZIP archive and are marked in the entry deta
 8. The Row action to delete all files from an entry in the entry details view
 9. The deleted files are marked in the entries list view with custom text
 10. The notice in the entry details view showing who performed the bulk delete action and when and showing the deleted files with custom text
+11. The form settings to configure email download link validity
 
 == Frequently Asked Questions ==
 
-= Can I change the file name of the ZIP archive?
+= Can I change the file name of the ZIP archive? =
 
 You can use the settings page from this option to overwrite the zip archive name. In this option you can also use merge tags from your form.
 
@@ -53,7 +54,7 @@ The plugin also offers a filter called `bdfgf_download_filename` which you can u
 
 You can find an example usage of this filter in [a small plugin in a GIST](https://gist.github.com/vcat-support/d0b817a4270c302d6325d76b0b67d017).
 
-= Can I change the file or folder name of the entries in the ZIP archive?
+= Can I change the file or folder name of the entries in the ZIP archive? =
 
 You can use the settings page from this option to overwrite the folder name. In this option you can also use merge tags from your form.
 
@@ -61,7 +62,7 @@ The plugin also offers a filter called `bdfgf_entry_filename` which you can use 
 
 You can find an example usage of this filter in [a small plugin in a GIST](https://gist.github.com/vcat-support/b1716d96e131535917b2be368a8fd935).
 
-= When I try to bulk download the files, nothing happens. What can I do?
+= When I try to bulk download the files, nothing happens. What can I do? =
 
 Issues like these usually occur when your server has too low values for the `memory_limit` or `max_execution_time`.
 
@@ -69,17 +70,40 @@ The plugin provides the filters `bdfgf_memory_limit` and `bdfgf_max_execution_ti
 
 You can find example usage of the [memory_limit](https://gist.github.com/vcat-support/f3b52c6f248e6a2b9301adfa845f206f) filter and the [max_execution_time](https://gist.github.com/vcat-support/09d72df61d084ab3250d491408c1e824) filter in the two linked GISTs.
 
-= Can I influence the permissions to download files in bulk?
+= Can I influence the permissions to download files in bulk? =
 
 By default only logged in users with the `gravityforms_view_entries` capability are allowed to download files in bulk. You can use the `bdfgf_download_permission` filter to expand permission check.
 
-= Can I add additional files to the zip archive?
+= Can I add additional files to the zip archive? =
 
 The Plugin provides a filter `bdfgf_single_entry_uploaded_files` and an action `bdfgf_after_uploaded_files` to do this. You can add extra files to every single entry or to the whole zip archive beside the entries.
 
 You can find example usage of the [bdfgf_single_entry_uploaded_files](https://gist.github.com/vcat-support/600ffe67054d34a546bcfa155bf978e0) filter and the [bdfgf_after_uploaded_files](https://gist.github.com/vcat-support/5b5005b28c8961562998bca28d201535) action in the two linked GISTs.
 
+= Can I delete files in bulk? =
+
+Yes with our form settings you can enable bulk delete.
+
+= Can I customize the nonce lifetime for single-entry downloads? =
+
+Yes. Use the `bdfgf_download_nonce_life` filter to return the lifetime in seconds. The filter also receives the nonce action, which contains the entry ID. A value of 2 days results in expiration after approximately 24 to 48 hours because WordPress uses nonce time windows.
+
+You can find an example usage of the [bdfgf_download_nonce_life filter](https://gist.github.com/vcat-support/3f4931984295645e4bd329d29c705161) in this Gist.
+
+= How long are email download links valid? =
+
+Links generated with the {bulk_download_link} merge tag are valid for 3 days by default. In the form's Bulk Download settings, choose a value in hours, days, weeks, or years. The effective lifetime is limited to 1 hour through 10 years.
+
+The validity period starts when the link is generated. Changing the setting affects new links; existing links retain their expiration time. Invalid or expired links are rejected. Developers can use the `bdfgf_email_download_link_lifetime` filter to change the lifetime in seconds for a form. Download permission is still checked when the link is used.
+
 == Changelog ==
+
+= 4.2.0 =
+* Add per-form email download link validity settings in hours, days, weeks, or years, with a default of 3 days.
+* Protect email download links with a signature and reject invalid or expired links.
+* Add the `bdfgf_email_download_link_lifetime` filter to customize email download link validity (minimum 1 hour, maximum 10 years).
+* Add the `bdfgf_download_nonce_life` filter to customize nonce lifetime for single-entry download links.
+* Check temporary ZIP creation and finalization before sending download headers; prevent caching of ZIP downloads.
 
 = 4.1.0 =
 * Harden upload URL to file path resolution to ensure files are resolved only inside the WordPress uploads directory.
